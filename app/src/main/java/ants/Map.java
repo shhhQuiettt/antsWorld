@@ -14,7 +14,6 @@ public class Map {
     private int width;
     private int height;
     private int vertexNumber;
-    // private int[][] distances;
 
     public ArrayList<Vertex> getVertices() {
         return vertices;
@@ -44,6 +43,8 @@ public class Map {
             int height) {
 
         Map map = new Map();
+
+        //Generating vertices
         map.vertices = new ArrayList<>();
         for (int i = 0; i < vertexNumber; i++) {
             int x = (int) (Math.random() * width);
@@ -57,10 +58,30 @@ public class Map {
             Vertex v1 = map.vertices.get(i);
             for (Vertex v2 : map.getKnearestVertices(v1, 3)) {
                 v1.addNeighbor(v2);
-                v2.addNeighbor(v1);
             }
         }
 
+        //Generating anthills
+
+        int redX = (int) (Math.random() * width);
+        int redY = (int) (Math.random() * height);
+        Anthill redAnthill = new Anthill(redX, redY, Color.RED);
+        
+        for (Vertex v2 : map.getKnearestVertices(redAnthill, 2)) {
+            redAnthill.addNeighbor(v2);
+        }
+
+        int blueX = (int) (Math.random() * width);
+        int blueY = (int) (Math.random() * height);
+
+        Anthill blueAnthill = new Anthill(blueX, blueY, Color.BLUE);
+
+        for (Vertex v2 : map.getKnearestVertices(blueAnthill, 2)) {
+            blueAnthill.addNeighbor(v2);
+        }
+
+        map.redAnthill = redAnthill;
+        map.blueAnthill = blueAnthill;
 
         return map;
 
