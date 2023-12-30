@@ -3,10 +3,10 @@ package ants;
 /**
  * CollectorAnt
  */
-public class Worker extends Ant implements carryLarvae, Attacking {
+public class WorkerAnt extends Ant implements carryLarvae, Attacking {
     private int numberOfLarvaes = 0;
 
-    public Worker(String name, int health, int strength, Anthill initialAnthill) {
+    public WorkerAnt(String name, int health, int strength, Anthill initialAnthill) {
         super(name, Color.BLUE, health, strength, initialAnthill);
     }
 

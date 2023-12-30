@@ -20,10 +20,12 @@ public class App {
         WorldConfig config = new WorldConfig(vertexNumber, stoneProbability, leafProbability, width, height, maxRedAnts, maxBlueAnts);
         System.out.println(config.toString());
         WorldManager worldManager = new WorldManager(config);
+        worldManager.run();
 
         // Map map = Map.generateRandomMap(4, 0.1, 0.1, 100, 100);
         // for (Vertex v : map.getVertices()) {
         //     System.out.println(v.getNeighbors());
         // }
     }
+
 }
