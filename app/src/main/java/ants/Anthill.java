@@ -14,4 +14,8 @@ public class Anthill extends Vertex {
         super(x, y, false, false);
         this.color = color;
     }
+
+    public Color getColor() {
+        return this.color;
+    }
 }

@@ -15,14 +15,14 @@ public class WorkerAnt extends Ant implements carryLarvae, Attacking {
     }
 
     public Ant getAndLockEnemy() {
-        while (currentVertex.blueAntInVertex()) {
-            Ant victim = currentVertex.getBlueAnt();
+        while (currentVertex.redAntInVertex()) {
+            Ant victim = currentVertex.getRedAnt();
             if (victim == null) {
                 return null;
             }
 
             victim.mutex.lock();
-            if (victim == currentVertex.getBlueAnt()) {
+            if (victim == currentVertex.getRedAnt()) {
                 return victim;
             }
             victim.mutex.unlock();
@@ -75,7 +75,7 @@ public class WorkerAnt extends Ant implements carryLarvae, Attacking {
 
     @Override
     protected void die() {
-        this.currentVertex.putLarve();
+        this.dropLarve();
         this.state = AntState.DYING;
 
         try {

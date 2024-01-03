@@ -38,6 +38,7 @@ public class SoldierAnt extends Ant implements Attacking {
         Ant victim = getAndLockEnemy();
         if (victim != null) {
             this.setState(AntState.ATTACKING);
+            System.out.println(this.color + " Soldier is attacking " + victim.color + " ant");
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {

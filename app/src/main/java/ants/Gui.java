@@ -20,11 +20,12 @@ public class Gui {
         this.frame.setSize(width, height);
 
         this.world = new JPanel();
+
         this.world.setLayout(null);
         // this.world.setPreferredSize(new Dimension(width, height));
         //
-        this.frame.add(world);
 
+        this.frame.add(world);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setVisible(true);
@@ -32,14 +33,14 @@ public class Gui {
 
     public void addStaticSprite(Sprite sprite) {
         this.sprites.add(sprite);
-        this.frame.add(sprite);
+        this.world.add(sprite);
         sprite.setPosition();
         sprite.setVisible(true);
     }
 
     public void addUpdatableSprite(UpdatableSprite animatedSprite) {
         this.updatebleComponents.add(animatedSprite);
-        this.frame.add(animatedSprite);
+        this.world.add(animatedSprite);
         animatedSprite.setPosition();
         animatedSprite.setVisible(true);
     }
@@ -49,4 +50,5 @@ public class Gui {
             updatableSprite.update(this.secondPerFrame);
         }
     }
+
 }

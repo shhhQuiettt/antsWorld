@@ -2,6 +2,7 @@ package ants;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 
 enum AntState {
@@ -17,8 +18,11 @@ public abstract class Ant {
 
     protected Anthill homeAnthill;
 
-    protected int x;
-    protected int y;
+    // protected int x;
+    // protected int y;
+    protected double x;
+    protected double y;
+
     protected double velocity;
 
     protected boolean isGoingHome = false;
@@ -35,26 +39,28 @@ public abstract class Ant {
     public Ant(String name, Color color, int health, int strength, Anthill initialAnthill) {
         this.name = name;
         this.currentVertex = initialAnthill;
-        this.velocity = 3.0;
+        this.velocity = 1.0;
         this.color = color;
         this.maxHealth = health;
         this.health = health;
         this.strength = strength;
+        this.x = initialAnthill.getX();
+        this.y = initialAnthill.getY();
     }
 
     public void setX(int x) {
         this.x = x;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -84,11 +90,11 @@ public abstract class Ant {
         return strength;
     }
 
-    public AntState getState() {
+    public synchronized AntState getState() {
         return state;
     }
 
-    public void setState(AntState state) {
+    public synchronized void setState(AntState state) {
         this.state = state;
     }
 
@@ -150,11 +156,11 @@ public abstract class Ant {
 
     protected void goToNextVertex() {
         this.nextVertex = this.chooseNextVertex();
-        this.currentVertex.removeAnt(this);
 
         double distance = Math.sqrt(Math.pow(this.nextVertex.getX() - this.x, 2)
                 + Math.pow(this.nextVertex.getY() - this.y, 2));
 
+        this.currentVertex.removeAnt(this);
         this.currentVertex = null;
 
         double velocityScalar = this.velocity / distance;
@@ -162,11 +168,20 @@ public abstract class Ant {
         double xVelocity = velocityScalar * (this.nextVertex.getX() - this.x);
         double yVelocity = velocityScalar * (this.nextVertex.getY() - this.y);
 
+        // at least one pixel per frame but have to keep scale
+        // if (Math.abs(xVelocity) < 1) {
+        //     xVelocity = Math.signum(xVelocity);
+        // }
+        // if (Math.abs(yVelocity) < 1) {
+        //     yVelocity = Math.signum(yVelocity);
+        // }
+
+
         while (!isNearCoords(this.nextVertex.getX(), this.nextVertex.getY())) {
             this.x += xVelocity;
             this.y += yVelocity;
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 System.err.println("While waiting for ant to move, Ant was interrupted");
             }
@@ -178,7 +193,7 @@ public abstract class Ant {
     }
 
     private boolean isNearCoords(int targetX, int targetY) {
-        return (Math.abs(this.x - targetX) <= this.velocity && Math.abs(this.y - targetY) <= this.velocity);
+        return (Math.abs(this.x - targetX) <= 5 * this.velocity && Math.abs(this.y - targetY) <= 5 * this.velocity);
     }
 
     public void lockAndDoActions() {
