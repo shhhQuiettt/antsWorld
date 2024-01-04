@@ -2,6 +2,9 @@ package ants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import java.util.ArrayList;
 
 /**
@@ -14,6 +17,8 @@ public class Gui {
 
     private ArrayList<UpdatableSprite> updatebleComponents = new ArrayList<UpdatableSprite>(50);
     private ArrayList<Sprite> sprites = new ArrayList<Sprite>(50);
+
+    private Lock mutex = new ReentrantLock();
 
     public Gui(int width, int height) {
         this.frame = new JFrame("Ants world");
@@ -45,10 +50,20 @@ public class Gui {
         animatedSprite.setVisible(true);
     }
 
+    public void removeUpdatableSprite(UpdatableSprite animatedSprite) {
+        this.mutex.lock();
+        this.updatebleComponents.remove(animatedSprite);
+        this.world.remove(animatedSprite);
+        animatedSprite.setVisible(false);
+        this.mutex.unlock();
+    }
+
     public void update() {
+        this.mutex.lock();
         for (UpdatableSprite updatableSprite : this.updatebleComponents) {
             updatableSprite.update(this.secondPerFrame);
         }
+        this.mutex.unlock();
     }
 
 }

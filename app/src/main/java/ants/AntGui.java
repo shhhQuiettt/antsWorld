@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
  * AntGui
  */
 // public class AntGui extends AnimatedSprite implements GuiUpdatable{
-public class AntGui extends UpdatableSprite {
+public class AntGui extends UpdatableSprite implements AntStateSubscriber {
     private final Ant ant;
 
     private BufferedImage movingImage;
@@ -24,10 +24,29 @@ public class AntGui extends UpdatableSprite {
     // }
     // }
 
+    @Override
+    public void onAntStateChange(AntState state) {
+        System.out.println("state changed to " + state + " for " + this.ant.getName() + " ant broadcasted");
+        if (state == AntState.MOVING) {
+            this.setDisplayedImage(this.movingImage);
+        }
+        else if (state == AntState.ATTACKING) {
+            this.setDisplayedImage(this.attackingImage);
+        }
+        else if (state == AntState.DYING) {
+            this.setDisplayedImage(this.dyingImage);
+        }
+        else if (state == AntState.DEAD) {
+            this.setDisplayedImage(this.deadImage);
+        }
+    }
+
     public AntGui(Ant ant, String movingFileName, String attackingFileName, String dyingFileName, String deadFileName) {
         super(movingFileName);
 
         this.ant = ant;
+
+        this.ant.subscribeStateChange(this);
 
         if (movingFileName != null) {
             this.movingImage = this.loadImage(movingFileName);
@@ -49,28 +68,16 @@ public class AntGui extends UpdatableSprite {
         this.setPosition((int) this.ant.getX(), (int) this.ant.getY());
     }
 
+
+
+
     public void update(int timeElapsed) {
-        System.out.println("AntGui update, state: " + this.ant.getState() + "\n");
-        System.out.flush();
         // SwingUtilities.invokeLater(new Runnable() {
         // public void run() {
         // setPosition();
         // }
         // });
         //
-        // CHANGE TO EVENTLISTENER
         this.setPosition();
-        if (this.ant.getState() == AntState.MOVING && this.displayedImage != this.movingImage ){
-            this.setDisplayedImage(this.movingImage);
-        }
-        else if (this.ant.getState() == AntState.ATTACKING && this.displayedImage != this.attackingImage){
-            this.setDisplayedImage(this.attackingImage);
-        }
-        else if (this.ant.getState() == AntState.DYING && this.displayedImage != this.dyingImage){
-            this.setDisplayedImage(this.dyingImage);
-        }
-        else if (this.ant.getState() == AntState.DEAD && this.displayedImage != this.deadImage){
-            this.setDisplayedImage(this.deadImage);
-        }
     }
 }

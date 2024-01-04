@@ -6,6 +6,8 @@ package ants;
 public interface carryLarvae {
     public int getNumberOfLarvaes();
 
+    public boolean isCarryingLarvae();
+
     void pickLarve();
 
     void dropLarve();

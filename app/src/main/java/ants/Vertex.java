@@ -18,7 +18,6 @@ public class Vertex {
     private boolean isStone;
     private int numberOfLarvae = 0;
 
-
     private ArrayList<Vertex> neighbors = new ArrayList<>();
 
     private BlockingQueue<Command> commandQueue = new LinkedBlockingQueue<Command>();
@@ -107,7 +106,9 @@ public class Vertex {
     }
 
     public Ant getBlueAnt() {
-        return blueAnts.peek();
+        Ant ant = blueAnts.peek();
+        System.out.println("Getting blue ant: " + ant);
+        return ant;
     }
 
     public void addAnt(Ant ant) {
@@ -127,14 +128,21 @@ public class Vertex {
         }
     }
 
-    public void awaitAndExecuteCommand() {
-        try {
-            Command command = commandQueue.take();
-            command.lockAndExecute();
-        } catch (InterruptedException e) {
-            System.err.println("Error while waiting for command");
-            e.printStackTrace();
+    public void tryExecuteCommand() {
+        // TODO: own threads?
+        // try {
+        // Command command = commandQueue.take();
+        Command command = commandQueue.poll();
+        if (command == null) {
+            return;
         }
+        System.out.println("Vertex is executing command");
+
+        command.execute();
+        // } catch (InterruptedException e) {
+        // System.err.println("Error while waiting for command");
+        // e.printStackTrace();
+        // }
     }
 
     public double distanceTo(Vertex vertex) {

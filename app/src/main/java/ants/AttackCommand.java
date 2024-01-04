@@ -3,34 +3,48 @@ package ants;
 /**
  * AttackCommand
  */
-public class AttackCommand extends Command{
-    public Ant[] getInvolvedAnts() {
-        return new Ant[]{victim};
-    }
+public class AttackCommand extends Command {
     private Ant victim;
+    private Ant attacker;
 
-    public AttackCommand(Ant victim) {
+    public AttackCommand(Ant attacker, Ant victim) {
+        this.attacker = attacker;
         this.victim = victim;
     }
 
+    private boolean tryLockVictim() {
+        return victim.leaveVertexSemaphore.tryAcquire();
+    }
+
+    private void unlockVictim() {
+        victim.leaveVertexSemaphore.release();
+    }
+
+    private void onReturn() {
+        this.unlockVictim();
+        this.executionSemaphore.release();
+    }
+
     @Override
-    protected void execute() {
-        if (victim.getState() == AntState.DYING || victim.getState() == AntState.DEAD) {
-            return;
+    protected boolean execute() {
+        System.out.println("AttackCommand is executing. Victim is " + victim.getName() + "");
+
+        if (!tryLockVictim()) {
+            System.out.println("lock failed");
+            onReturn();
+            return false;
         }
 
-        victim.setState(AntState.DYING);
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            System.err.println("Error while waiting in AttackCommand");
+        if (!this.attacker.isAlive() || !this.victim.isAlive() ) {
+            System.out.println("Atacker or Victim is already dead");
+            onReturn();
+            return false;
         }
-
-        victim.setState(AntState.DEAD);
-
-        Vertex victimVertex = victim.getCurrentVertex();
-        victimVertex.removeAnt(victim);
 
         victim.die();
+
+        onReturn();
+        return true;
     }
+
 }
