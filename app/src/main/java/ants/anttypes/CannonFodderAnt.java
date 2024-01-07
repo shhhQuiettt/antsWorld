@@ -13,11 +13,7 @@ public class CannonFodderAnt extends Ant {
 
     @Override
     protected void doActionsInVertex() {
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in CannonFodderAnt");
-        }
+        this.doScanning();
     }
 
 }

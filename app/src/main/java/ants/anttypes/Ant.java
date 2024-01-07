@@ -253,15 +253,7 @@ public abstract class Ant {
             return;
         }
 
-        this.beforeDie();
-
         this.setState(AntState.DYING);
-
-        // try {
-        // Thread.sleep(1000);
-        // } catch (InterruptedException e) {
-        // System.err.println("While waiting for ant to die, Ant was interrupted");
-        // }
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -317,7 +309,6 @@ public abstract class Ant {
                 Thread.sleep(16);
             } catch (InterruptedException e) {
                 System.err.println("While waiting for ant to move, Ant was interrupted");
-                // Exit thread
                 Thread.currentThread().interrupt();
             }
         }
@@ -341,7 +332,19 @@ public abstract class Ant {
         return (int) (700 + Math.random() * 1000);
     }
 
-    public final void lockAndDoActions() {
+    protected void doScanning() {
+        try {
+            Thread.sleep(getRandomWaitingTime());
+        } catch (InterruptedException e) {
+            System.err.println("Interrupted while waiting in Ant");
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public final void iterateAction() {
+        this.setState(AntState.MOVING);
+        this.goToNextVertex();
+
         this.setState(AntState.SCANNING);
 
         if (this.isInHomeAnthill()) {
@@ -356,16 +359,14 @@ public abstract class Ant {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.err.println("While waiting for ant to get off the stone, Ant was interrupted");
-                // Exit thread
+                Thread.currentThread().interrupt();
             }
         }
 
         if (!this.isAlive()) {
+            this.onDeath();
             return;
         }
-
-        this.setState(AntState.MOVING);
-        this.goToNextVertex();
     }
 
     protected void sendCommandAndAwaitExecution(Command command) {
@@ -373,7 +374,7 @@ public abstract class Ant {
         try {
             command.executionSemaphore.acquire();
         } catch (InterruptedException e) {
-            System.err.println("While waiting for command to be released, Ant was interrupted");
+            System.err.println("While waiting for command to be executed, Ant was interrupted");
             Thread.currentThread().interrupt();
         }
     }
@@ -383,7 +384,7 @@ public abstract class Ant {
     protected void doActionsInHomeAnthill() {
     }
 
-    protected void beforeDie() {
+    protected void onDeath() {
     }
 
     public String info() {

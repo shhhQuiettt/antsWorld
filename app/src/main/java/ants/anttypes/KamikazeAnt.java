@@ -9,8 +9,6 @@ import ants.map.Anthill;
  * KamikazeAnt
  */
 public class KamikazeAnt extends Ant implements Attacking {
-    private boolean isExploding = false;
-
     public KamikazeAnt(String name, int health, int strength, Anthill initialAnthill, Anthill enemyAnthill) {
         super(name, AntColor.BLUE, health, strength, initialAnthill, enemyAnthill);
     }
@@ -19,12 +17,7 @@ public class KamikazeAnt extends Ant implements Attacking {
     protected void doActionsInVertex() {
         this.tryToAttack();
 
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in SoldierAnt");
-            Thread.currentThread().interrupt();
-        }
+        this.doScanning();
 
         this.tryToAttack();
     }
@@ -48,8 +41,6 @@ public class KamikazeAnt extends Ant implements Attacking {
 
     @Override
     public void attack(Ant victim) {
-        this.isExploding = true;
-
         this.setState(AntState.ATTACKING);
         Command attackRequest = new ExplosionCommand(this);
         this.sendCommandAndAwaitExecution(attackRequest);

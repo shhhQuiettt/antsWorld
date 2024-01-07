@@ -14,12 +14,8 @@ public class AntThread extends Thread {
 
     @Override
     public void run() {
-        // while (this.ant.getState() != AntState.DEAD) {
-        while (true) {
-            this.ant.lockAndDoActions();
+        while (Thread.currentThread().isInterrupted() == false) {
+            this.ant.iterateAction();
         }
-
-        // wait until inturrupted (blocking)
-        // System.out.println("Exitin ant thread loop");
     }
 }

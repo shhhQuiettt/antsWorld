@@ -26,21 +26,17 @@ public class AntInfoThread extends Thread {
     @Override
     public void run() {
         int milisecondsPerFrame = 1000 / 60;
-        System.out.println("AntInfoThread: " + Thread.currentThread().getName() + " started");
 
         Timer timer = new Timer(milisecondsPerFrame, e -> {
             if (antGui == null) {
+                this.writeInfo.accept(null);
                 return;
             }
 
-            // System.out.println("Ant info writing on thread: " + Thread.currentThread().getName());
             this.writeInfo.accept(antGui.getAnt().info());
             this.antGui.addInfoBorder();
         });
         timer.start();
-
-        System.out.println("fini?");
-
     }
 
 }

@@ -45,12 +45,7 @@ public class SoldierAnt extends Ant implements Attacking {
 
         this.tryToHide();
 
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in SoldierAnt");
-            Thread.currentThread().interrupt();
-        }
+        this.doScanning();
 
         this.tryToAttack();
 

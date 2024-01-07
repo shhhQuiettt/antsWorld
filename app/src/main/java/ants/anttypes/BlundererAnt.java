@@ -27,12 +27,7 @@ public class BlundererAnt extends Ant implements CarryLarvae {
     public void doActionsInVertex() {
         this.tryToHide();
 
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("While BlundererAnt was waiting, it was interrupted");
-            e.printStackTrace();
-        }
+        this.doScanning();
 
         this.tryToPickLarve();
 
@@ -125,7 +120,7 @@ public class BlundererAnt extends Ant implements CarryLarvae {
     }
 
     @Override
-    protected void beforeDie() {
+    protected void onDeath() {
         if (this.isCarryingLarvae())
             this.dropAllLarvae();
     }

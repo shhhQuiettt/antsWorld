@@ -5,7 +5,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.sound.sampled.Line;
 import javax.swing.SwingUtilities;
 
 import ants.anttypes.Ant;
@@ -35,9 +34,6 @@ public class WorldManager implements AntDeathSubscriber {
 
     private ArrayList<Ant> ants;
 
-    private ArrayList<AntGui> antGuis = new ArrayList<AntGui>();
-    private ArrayList<VertexGui> vertexGuis = new ArrayList<VertexGui>();
-
     private final WorldConfig config;
     private RedAntFactory redAntFactory;
     private BlueAntFactory blueAntFactory;
@@ -49,8 +45,6 @@ public class WorldManager implements AntDeathSubscriber {
     private VertexInfoThread vertexInfoThread;
 
     private HashMap<Ant, AntThread> antThreadMap = new HashMap<Ant, AntThread>();
-    // private HashMap<Ant, AntGui> antGuiMap = new HashMap<Ant, AntGui>();
-    // private Lock guiLock = new ReentrantLock();
 
     public WorldManager(WorldConfig config) {
         this.map = Map.generateRandomMap(config.vertexNumber,
@@ -62,23 +56,16 @@ public class WorldManager implements AntDeathSubscriber {
                 config.maxLarvaePerVertex);
 
         this.config = config;
-        // this.ants = new ArrayBlockingQueue<Ant>(config.maxRedAnts +
-        // config.maxBlueAnts);
-        this.ants = new ArrayList<Ant>(config.maxRedAnts + config.maxBlueAnts);
-
-        this.antThreads = new ArrayList<AntThread>(config.maxRedAnts + config.maxBlueAnts);
+        this.ants = new ArrayList<Ant>();
+        this.antThreads = new ArrayList<AntThread>();
         this.commandExecutors = new ArrayList<CommandExecutor>(config.vertexNumber);
+
         this.redAntFactory = new RedAntFactory(map.getRedAnthill(), map.getBlueAnthill());
         this.blueAntFactory = new BlueAntFactory(map.getBlueAnthill(), map.getRedAnthill());
         this.antGuiFactory = new AntGuiFactory();
     }
 
     public void run() {
-
-        // WorkerAnt ant = this.blueAntFactory.newWorkerAnt("blue", 1, 1);
-
-        System.out.println("Main Thread:" + Thread.currentThread().getName());
-
         AntCreationButtonPanel antCreationButtonPanel = new AntCreationButtonPanel(this.redAntFactory,
                 this.blueAntFactory,
                 (ant) -> {
@@ -87,57 +74,30 @@ public class WorldManager implements AntDeathSubscriber {
 
         this.gui = new Gui(this.config.width, this.config.height, antCreationButtonPanel);
 
-        this.addVerticesToGui();
+        for (Vertex v : this.map.getVertices()) {
+            this.addVertexToGui(v);
+        }
 
         this.addAnthillsToGui();
 
         this.addLinesBetweenNeighboursToGui();
 
-        this.addAntsToGui();
-
-
-        this.createAntThreads();
-
         this.createCommandExecutors();
 
         this.createAntInfoThread();
-
         this.createVertexInfoThread();
 
-        this.addInfoListeners();
-
-        this.startAntThreads();
-
         this.startCommandExecutors();
-
         this.antInfoThread.start();
         this.vertexInfoThread.start();
 
-        // measure average time for one loop execution
+        this.startAntThreads();
 
         gui.start();
-
-        System.out.println("Reachable? ");
-    }
-
-    private void addInfoListeners() {
-        for (AntGui antGui : this.antGuis) {
-            this.attachAntInfoListener(antGui);
-        }
-
-        for (VertexGui vertexGui : this.vertexGuis) {
-            this.attachVertexInfoListener(vertexGui);
-        }
-
-            // this.attachVertexInfoListener(vertexGui);
-            // this.attachVertexInfoListener(vertexGui);
-
 
     }
 
     private synchronized void registerNewAnt(Ant ant) {
-        System.out.println(Thread.currentThread().getName());
-
         this.ants.add(ant);
 
         AntThread antThread = new AntThread(ant);
@@ -148,55 +108,23 @@ public class WorldManager implements AntDeathSubscriber {
 
         AntGui antGui = this.antGuiFactory.newAntGui(ant);
         this.attachAntInfoListener(antGui);
-        this.antGuis.add(antGui);
 
         this.gui.addUpdatableSprite(antGui);
         antThread.start();
     }
 
-    // separate
-    private void addAntsToGui() {
-        for (int i = 0; i < this.config.initialRedAnts; i++) {
-
-            Ant ant;
-            // if (Math.random() < 0.5)
-            // ant = this.redAntFactory.newCollectorAnt("red" + i, 1, 1);
-            // else
-            // ant = this.redAntFactory.newSoldierAnt("red" + i, 1, 1);
-            ant = this.redAntFactory.newBlundererAnt("red" + i, 1, 1, 1.0);
-            this.ants.add(ant);
-            this.gui.addUpdatableSprite(antGuiFactory.newAntGui(ant));
-        }
-
-        for (int i = 0; i < this.config.initialBlueAnts; i++) {
-            Ant ant = this.blueAntFactory.newWorkerAnt("blue" + i, 1, 1);
-            this.ants.add(ant);
-            AntGui antGui = this.antGuiFactory.newAntGui(ant);
-            this.antGuis.add(antGui);
-
-            // LarvaeOnHeadAdder updater = new LarvaeOnHeadAdder((LarvaeInfoEmiter) ant);
-            // antGui.addImageUpdater(updater);
-
-            this.gui.addUpdatableSprite(antGui);
-        }
-    }
-
-    private void addVerticesToGui() {
-        for (Vertex v : this.map.getVertices()) {
-            VertexGui vertexGui = new VertexGui(v);
-            this.vertexGuis.add(vertexGui);
-            this.gui.addStaticSprite(vertexGui);
-        }
+    private void addVertexToGui(Vertex v) {
+        VertexGui vertexGui = new VertexGui(v);
+        this.attachVertexInfoListener(vertexGui);
+        this.gui.addStaticSprite(vertexGui);
     }
 
     private void addLinesBetweenNeighboursToGui() {
-        // TODO: double lines
         for (Vertex v : this.map.getVertices()) {
             for (Vertex neighbour : v.getNeighbors()) {
                 Point p1 = new Point(v.getX(), v.getY());
                 Point p2 = new Point(neighbour.getX(), neighbour.getY());
 
-                // make them a bit nearer to themselves
                 double dx = p2.x - p1.x;
                 double dy = p2.y - p1.y;
 
@@ -210,7 +138,6 @@ public class WorldManager implements AntDeathSubscriber {
                 this.gui.addLine(p1, p2);
             }
         }
-
 
         for (Vertex neighbour : this.map.getRedAnthill().getNeighbors()) {
             Point p1 = new Point(this.map.getRedAnthill().getX(), this.map.getRedAnthill().getY());
@@ -252,18 +179,13 @@ public class WorldManager implements AntDeathSubscriber {
     }
 
     private void addAnthillsToGui() {
-        this.gui.addStaticSprite(new AnthillGui(this.map.getRedAnthill()));
-        this.gui.addStaticSprite(new AnthillGui(this.map.getBlueAnthill()));
-    }
+        AnthillGui redAnthillGui = new AnthillGui(this.map.getRedAnthill());
+        this.attachVertexInfoListener(redAnthillGui);
+        this.gui.addStaticSprite(redAnthillGui);
 
-    private void createAntThreads() {
-        for (Ant ant : this.ants) {
-            AntThread antThread = new AntThread(ant);
-            // TODO: other functions
-            ant.subscribeDeath(this);
-            this.antThreads.add(antThread);
-            this.antThreadMap.put(ant, antThread);
-        }
+        AnthillGui blueAnthillGui = new AnthillGui(this.map.getBlueAnthill());
+        this.attachVertexInfoListener(blueAnthillGui);
+        this.gui.addStaticSprite(blueAnthillGui);
     }
 
     private void startAntThreads() {
@@ -274,9 +196,11 @@ public class WorldManager implements AntDeathSubscriber {
 
     private void createCommandExecutors() {
         for (Vertex v : this.map.getVertices()) {
-            CommandExecutor commandExecutor = new CommandExecutor(v);
-            this.commandExecutors.add(commandExecutor);
+            this.commandExecutors.add(new CommandExecutor(v));
         }
+
+        this.commandExecutors.add(new CommandExecutor(this.map.getRedAnthill()));
+        this.commandExecutors.add(new CommandExecutor(this.map.getBlueAnthill()));
     }
 
     private void startCommandExecutors() {
@@ -286,6 +210,13 @@ public class WorldManager implements AntDeathSubscriber {
     }
 
     private void createAntInfoThread() {
+        this.gui.addUnfocusListener(new Runnable() {
+            @Override
+            public void run() {
+                WorldManager.this.antInfoThread.setAntGui(null);
+            }
+        });
+
         this.antInfoThread = new AntInfoThread(
                 (info) -> {
                     SwingUtilities.invokeLater(new Runnable() {
@@ -324,6 +255,13 @@ public class WorldManager implements AntDeathSubscriber {
     }
 
     private void createVertexInfoThread() {
+        this.gui.addUnfocusListener(new Runnable() {
+            @Override
+            public void run() {
+                WorldManager.this.vertexInfoThread.setVertexGui(null);
+            }
+        });
+
         this.vertexInfoThread = new VertexInfoThread(
                 (info) -> {
                     SwingUtilities.invokeLater(new Runnable() {
@@ -340,7 +278,6 @@ public class WorldManager implements AntDeathSubscriber {
                 new MouseListener() {
                     @Override
                     public void mouseClicked(java.awt.event.MouseEvent e) {
-                        System.out.println("dupa");
                         WorldManager.this.vertexInfoThread.setVertexGui(vertexGui);
                     }
 
@@ -364,15 +301,11 @@ public class WorldManager implements AntDeathSubscriber {
 
     @Override
     public synchronized void onAntDeath(Ant ant) {
-        System.out.println("Ant deaths broadcasted");
-        AntThread antThread = this.antThreadMap.get(ant);
-        // this.guiLock.lock();
-        // this.gui.removeUpdatableSprite(this.antGuiMap.get(ant));
-        // this.guiLock.unlock();
+        // AntThread antThread = this.antThreadMap.get(ant);
 
-        // kill thread
-        antThread.stop();
-        this.antThreadMap.remove(ant);
+        // // kill thread
+        // // antThread.stop();
+        // antThread.interrupt();
         // this.ants.remove(ant);
     }
 }

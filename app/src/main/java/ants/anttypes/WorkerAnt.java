@@ -26,11 +26,7 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae  {
     protected void doActionsInHomeAnthill() {
         this.setState(AntState.SCANNING);
         this.dropAllLarvae();
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in WorkerAnt");
-        }
+        this.doScanning();
     }
 
 
@@ -48,11 +44,7 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae  {
 
         this.tryToAttack();
 
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in WorkerAnt");
-        }
+        this.doScanning();
 
         this.tryToAttack();
 
@@ -128,7 +120,7 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae  {
     }
 
     @Override
-    protected void beforeDie() {
+    protected void onDeath() {
         if (this.isCarryingLarvae())
             this.dropAllLarvae();
     }

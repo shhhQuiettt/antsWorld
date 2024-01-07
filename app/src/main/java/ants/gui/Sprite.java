@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -100,5 +101,12 @@ public abstract class Sprite extends JLabel {
 
     public void removeInfoBorder() {
         this.setBorder(null);
+    }
+
+    public boolean imageContains(Point point) {
+        Rectangle allAread =  this.getBounds();
+        Rectangle imageArea = new Rectangle(allAread.x + this.getImageWidth() / 2, allAread.y + this.getImageHeight() / 2, this.getImageWidth(), this.getImageHeight());
+
+        return imageArea.contains(point);
     }
 }

@@ -19,12 +19,7 @@ public class CollectorAnt extends Ant implements CarryLarvae {
     protected void doActionsInHomeAnthill() {
         this.setState(AntState.SCANNING);
         this.dropAllLarvae();
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in CollectorAnt");
-            Thread.currentThread().interrupt();
-        }
+        this.doScanning();
     }
 
     @Override
@@ -39,12 +34,7 @@ public class CollectorAnt extends Ant implements CarryLarvae {
 
         this.tryToHide();
 
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in SoldierAnt");
-            Thread.currentThread().interrupt();
-        }
+        this.doScanning();
 
         if (this.isHidden()) {
             this.unhide();
@@ -95,7 +85,7 @@ public class CollectorAnt extends Ant implements CarryLarvae {
     }
 
     @Override
-    protected void beforeDie() {
+    protected void onDeath() {
         if (this.isCarryingLarvae())
             this.dropAllLarvae();
     }

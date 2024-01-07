@@ -37,7 +37,8 @@ class MapBuilder {
         Vertex vertex = new Vertex(position.x, position.y, isLeaf, isStone);
 
         for (int i = 1; i <= maxLarvaePerVertex; i++) {
-            if (Math.random() < 1.0 / ((double) i * (double) maxLarvaePerVertex)) {
+
+            if (Math.random() < 0.36) {
                 vertex.putLarva();
             }
         }
@@ -62,7 +63,7 @@ class MapBuilder {
         vertices.add(this.map.getBlueAnthill());
 
         for (Vertex v : vertices) {
-            ArrayList<Vertex> neighbors = getKnearestVertices(this.map, v, vertexNeighborhoodSize);
+            ArrayList<Vertex> neighbors = getKnearestVertices(v, vertexNeighborhoodSize);
             for (Vertex neighbor : neighbors) {
                 if (v.getNeighbors().size() < vertexNeighborhoodSize)
                     v.addNeighbor(neighbor);
@@ -105,8 +106,8 @@ class MapBuilder {
         throw new RuntimeException("Could not generate random non-overlapping position");
     }
 
-    private ArrayList<Vertex> getKnearestVertices(Map map, Vertex vertex, int k) {
-        if (k >= map.getVertices().size() + 2) {
+    private ArrayList<Vertex> getKnearestVertices(Vertex vertex, int k) {
+        if (k >= this.map.getVertices().size() + 2) {
             throw new IllegalArgumentException("k must be smaller than the number of vertices");
         }
 
@@ -122,7 +123,7 @@ class MapBuilder {
         if (map.getRedAnthill() != null && map.getRedAnthill() != vertex) {
             priorityQueue.add(map.getRedAnthill());
         }
-        if (map.getBlueAnthill() != null && map.getRedAnthill() != vertex) {
+        if (map.getBlueAnthill() != null && map.getBlueAnthill() != vertex) {
             priorityQueue.add(map.getBlueAnthill());
         }
 

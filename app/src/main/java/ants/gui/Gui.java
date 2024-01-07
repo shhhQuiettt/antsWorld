@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,8 +28,8 @@ public class Gui {
     private JPanel buttonPanel;
     // private JPanel infoPanel;
     //
-    String antInfoText = "[Click an Ant to see the info]";
-    String anthillInfoText = "[Click an Anthill to see the info]";
+    String antInfoDefaultText = "[Click an Ant to see the info]";
+    String vertexDefaultInfoText = "[Click a Vertex to see the info]";
 
     private JLabel antInfo;
     private JLabel vertexInfo;
@@ -62,13 +64,13 @@ public class Gui {
         JPanel infoPanel = new JPanel();
         infoPanel.setBackground(new Color(50, 50, 50));
 
-        this.antInfo = new JLabel(this.antInfoText);
+        this.antInfo = new JLabel(this.antInfoDefaultText);
         this.antInfo.setForeground(new Color(200, 200, 200));
         this.antInfo.setPreferredSize(new Dimension(infoPanelWidth, worldHeight / 2));
         this.antInfo.setBorder(BorderFactory.createLineBorder(Color.black));
         this.antInfo.setVerticalAlignment(SwingConstants.TOP);
 
-        this.vertexInfo = new JLabel(this.anthillInfoText);
+        this.vertexInfo = new JLabel(this.vertexDefaultInfoText);
         this.vertexInfo.setForeground(new Color(200, 200, 200));
         this.vertexInfo.setPreferredSize(new Dimension(infoPanelWidth, worldHeight / 2));
         this.vertexInfo.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -84,12 +86,48 @@ public class Gui {
         frame.setVisible(true);
     }
 
+    public void addUnfocusListener(Runnable onUnfocus) {
+        this.frame.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                System.out.println("ololo");
+                for (Sprite sprite : sprites) {
+                    if (sprite.imageContains(e.getPoint())) {
+                        return;
+                    }
+                }
+
+                for (UpdatableSprite updatableSprite : updatebleComponents) {
+                    if (updatableSprite.imageContains(e.getPoint())) {
+                        return;
+                    }
+                }
+
+                onUnfocus.run();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+    }
+
     public void addStaticSprite(Sprite sprite) {
         this.sprites.add(sprite);
         this.world.add(sprite);
         sprite.setPosition();
-        // this.world.setComponentZOrder(sprite, 1);
-        System.out.println("Static" + this.world.getComponentZOrder(sprite));
         sprite.setVisible(true);
     }
 
@@ -97,7 +135,6 @@ public class Gui {
         this.updatebleComponents.add(animatedSprite);
         this.world.add(animatedSprite);
         this.world.setComponentZOrder(animatedSprite, 0);
-        System.out.println("updatabel: " + this.world.getComponentZOrder(animatedSprite));
         animatedSprite.setPosition();
         animatedSprite.setVisible(true);
     }
@@ -116,10 +153,18 @@ public class Gui {
     }
 
     public void setAntInfo(String text) {
+        if (text == null) {
+            this.antInfo.setText(this.antInfoDefaultText);
+            return;
+        }
         this.antInfo.setText(convertStringToHtml(text));
     }
 
     public void setVertexInfo(String text) {
+        if (text == null) {
+            this.vertexInfo.setText(this.vertexDefaultInfoText);
+            return;
+        }
         this.vertexInfo.setText(convertStringToHtml(text));
     }
 
@@ -147,10 +192,7 @@ public class Gui {
         for (UpdatableSprite updatableSprite : this.updatebleComponents) {
             updatableSprite.update(this.milisecondPerFrame);
         }
-        // this.world.repaint();
         Toolkit.getDefaultToolkit().sync();
-        // this.world.revalidate();
-        // this.frame.revalidate();
     }
 
 }

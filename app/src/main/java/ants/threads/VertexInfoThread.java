@@ -7,7 +7,7 @@ import javax.swing.Timer;
 import ants.gui.VertexGui;
 
 /**
- * vertexInfoThread
+ * VertexInfoThread
  */
 public class VertexInfoThread extends Thread {
     private VertexGui vertexGui = null;
@@ -30,6 +30,7 @@ public class VertexInfoThread extends Thread {
 
         Timer timer = new Timer(milisecondsPerFrame, e -> {
             if (vertexGui == null) {
+                this.writeInfo.accept(null);
                 return;
             }
 
