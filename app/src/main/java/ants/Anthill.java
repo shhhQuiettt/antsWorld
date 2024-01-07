@@ -1,8 +1,5 @@
 package ants;
 
-enum AntColor {
-    RED, BLUE
-}
 
 /**
  * Anthill

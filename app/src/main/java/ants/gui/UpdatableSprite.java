@@ -1,4 +1,4 @@
-package ants;
+package ants.gui;
 
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Lock;

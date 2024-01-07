@@ -1,6 +1,7 @@
 package ants;
 
 import java.util.function.Consumer;
+import ants.gui.AntGui;
 
 import javax.swing.Timer;
 
@@ -33,7 +34,7 @@ public class AntInfoThread extends Thread {
             }
 
             // System.out.println("Ant info writing on thread: " + Thread.currentThread().getName());
-            this.writeInfo.accept(antGui.ant.info());
+            this.writeInfo.accept(antGui.getAnt().info());
             this.antGui.addInfoBorder();
         });
         timer.start();

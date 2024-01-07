@@ -1,5 +1,6 @@
-2. Making larva appear on ant
-3. Making larva appear on drop
 4. Sounds
 
-9. attack until
+
+5. Organize 
+6. one info
+7. click outside info to dissapear

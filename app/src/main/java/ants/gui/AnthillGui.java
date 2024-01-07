@@ -1,5 +1,6 @@
-package ants;
+package ants.gui;
 
+import ants.*;
 /**
  * AnthillGui
  */
@@ -13,7 +14,7 @@ public class AnthillGui extends VertexGui{
             return "anthillBlue";
         }
     }
-    AnthillGui(Anthill anthill) {
+    public AnthillGui(Anthill anthill) {
         super(anthill, getFileName(anthill));
         this.anthill = anthill;
     }

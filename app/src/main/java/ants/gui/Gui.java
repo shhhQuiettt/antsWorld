@@ -1,4 +1,5 @@
-package ants;
+package ants.gui;
+import ants.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +49,7 @@ public class Gui {
         this.frame.add(world);
 
         this.buttonPanel = buttonPanel;
-        this.frame.add(buttonPanel, BorderLayout.SOUTH);
+        this.frame.add(this.buttonPanel, BorderLayout.SOUTH);
         buttonPanel.setVisible(true);
 
         JPanel infoPanel = new JPanel();

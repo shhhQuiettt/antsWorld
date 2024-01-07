@@ -1,4 +1,6 @@
-package ants;
+package ants.gui;
+
+import ants.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,17 +14,14 @@ import java.util.function.Consumer;
  */
 public class AntCreationButtonPanel extends JPanel {
 
-    private RedAntFactory redAntFactory;
-    private BlueAntFactory blueAntFactory;
-
     private int buttonNumber = 3;
     private int buttonHeight = 70;
     private int buttonWidth = 100;
 
     public AntCreationButtonPanel(RedAntFactory redAntFactory, BlueAntFactory blueAntFactory,
             Consumer<Ant> onAntCreation) {
-        this.redAntFactory = redAntFactory;
-        this.blueAntFactory = blueAntFactory;
+        // this.redAntFactory = redAntFactory;
+        // this.blueAntFactory = blueAntFactory;
         this.setBackground(
                 new Color(30, 30, 30));
 

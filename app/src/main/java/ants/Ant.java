@@ -6,9 +6,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-enum AntState {
-    SCANNING, MOVING, ATTACKING, HIDING, DYING, DEAD
-}
 
 /**
  * Ant

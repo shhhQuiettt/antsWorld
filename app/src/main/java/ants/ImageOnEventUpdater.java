@@ -1,6 +1,6 @@
 package ants;
 
-import java.awt.image.BufferedImage;
+import ants.gui.AntGui;
 
 /**
  * ImageOnEventUpdater

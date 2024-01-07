@@ -1,4 +1,4 @@
-package ants;
+package ants.gui;
 
 import javax.swing.*;
 import java.awt.*;

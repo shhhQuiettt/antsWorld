@@ -1,5 +1,6 @@
 package ants;
 
+import ants.gui.*;
 import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;

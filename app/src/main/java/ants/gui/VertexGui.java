@@ -1,4 +1,6 @@
-package ants;
+package ants.gui;
+
+import ants.*;
 
 import java.util.LinkedList;
 
@@ -8,6 +10,10 @@ import java.util.LinkedList;
 public class VertexGui extends Sprite implements LarvaeSubscriber {
     Vertex vertex;
     LinkedList<Sprite> larvaes = new LinkedList<>();
+
+    public Vertex getVertex() {
+        return this.vertex;
+    }
 
     private int[] getRandomAroundVertexCoords(int centerX, int centerY) {
         int[] coords = new int[2];

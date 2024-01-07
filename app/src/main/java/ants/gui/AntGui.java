@@ -1,8 +1,9 @@
-package ants;
+package ants.gui;
 
 import java.awt.image.BufferedImage;
 import javax.swing.SwingUtilities;
 import java.util.ArrayList;
+import ants.*;
 
 /**
  * AntGui
@@ -15,33 +16,6 @@ public class AntGui extends UpdatableSprite implements AntStateSubscriber {
     private BufferedImage attackingImage;
     private BufferedImage dyingImage;
     private BufferedImage deadImage;
-
-    // public ArrayList<BufferedImage> getAllImages() {
-    // ArrayList<BufferedImage> images = new ArrayList<>();
-    // if (this.movingImage != null) {
-    // images.add(this.movingImage);
-    // }
-    // if (this.attackingImage != null) {
-    // images.add(this.attackingImage);
-    // }
-    // if (this.dyingImage != null) {
-    // images.add(this.dyingImage);
-    // }
-    // if (this.deadImage != null) {
-    // images.add(this.deadImage);
-    // }
-    // return images;
-    // }
-
-    // private ArrayList<ImageOnEventUpdater> imageUpdaters = new ArrayList<>();
-
-    // private static String getFileName(Ant ant) {
-    // if (ant.getColor() == Color.RED) {
-    // return "antRed";
-    // } else {
-    // return "antBlue";
-    // }
-    // }
 
     @Override
     public synchronized void onAntStateChange(AntState state) {
@@ -62,10 +36,6 @@ public class AntGui extends UpdatableSprite implements AntStateSubscriber {
         }
     }
 
-    // public void addImageUpdater(ImageOnEventUpdater updater) {
-    // updater.register(this);
-    // // this.imageUpdaters.add(updater);
-    // }
 
     public AntGui(Ant ant, AntImageConfig imageConfig) {
         super(imageConfig.getMovingImageName());
@@ -92,6 +62,10 @@ public class AntGui extends UpdatableSprite implements AntStateSubscriber {
     @Override
     public void setPosition() {
         this.setPosition((int) this.ant.getX(), (int) this.ant.getY());
+    }
+
+    public Ant getAnt() {
+        return this.ant;
     }
 
     public void update(int timeElapsed) {

@@ -1,5 +1,6 @@
 package ants;
 
+import ants.gui.VertexGui;
 import javax.swing.Timer;
 import java.util.function.Consumer;
 
@@ -34,7 +35,7 @@ public class VertexInfoThread extends Thread {
                 return;
             }
 
-            this.writeInfo.accept(vertexGui.vertex.info());
+            this.writeInfo.accept(vertexGui.getVertex().info());
             this.vertexGui.addInfoBorder();
         });
 

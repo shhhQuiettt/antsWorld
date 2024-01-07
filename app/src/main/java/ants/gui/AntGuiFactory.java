@@ -1,6 +1,7 @@
-package ants;
+package ants.gui;
 
 import java.util.HashMap;
+import ants.*;
 
 /**
  * RedAntGuiFactory
