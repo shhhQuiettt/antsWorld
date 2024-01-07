@@ -3,7 +3,9 @@ package ants.interfaces;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * picksLarve
+ * CarryLarvae
+ *
+ * Entity able to carry larvae.
  */
 public interface CarryLarvae {
     public AtomicInteger getNumberOfLarvaes();

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 /**
  * CollectorAnt
+ * Ant which can carry larvae and will attack enemy ants.
  */
 public class WorkerAnt extends Ant implements Attacking, CarryLarvae  {
     private AtomicInteger numberOfLarvaes = new AtomicInteger(0);
@@ -52,9 +53,6 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae  {
             this.unhide();
         }
     }
-
-    ////////////
-    //
 
     public Ant getEnemy() {
         if (currentVertex.redAntInVertex()) {
@@ -127,8 +125,6 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae  {
 
     @Override
     public void attack(Ant victim) {
-        // victim.decreaseHealth(this.strength);
-
         AttackCommand attackRequest = new AttackCommand(this, victim);
         this.sendCommandAndAwaitExecution(attackRequest);
     }

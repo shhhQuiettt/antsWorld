@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 /**
  * BlundererAnt
+ * Ant with a probability of dropping a larva when is going home.
  */
 public class BlundererAnt extends Ant implements CarryLarvae {
     AtomicInteger numberOfLarvaes = new AtomicInteger(0);
@@ -46,7 +47,7 @@ public class BlundererAnt extends Ant implements CarryLarvae {
     }
 
     @Override
-    public void doActionsInHomeAnthill() {
+    protected void doActionsInHomeAnthill() {
         this.dropAllLarvae();
     }
 
@@ -99,6 +100,11 @@ public class BlundererAnt extends Ant implements CarryLarvae {
         }
     }
 
+
+    /**
+     * Subscribe to larvae events
+     * @param subscriber
+     */
     public void subscribeLarvae(LarvaeSubscriber subscriber) {
         this.larvaeSubscribers.add(subscriber);
     }

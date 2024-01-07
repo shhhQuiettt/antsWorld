@@ -12,6 +12,8 @@ import ants.interfaces.LarvaeSubscriber;
 
 /**
  * Vertex
+ *
+ * Represents a vertex in the map.
  */
 public class Vertex {
     private final int x;
@@ -77,14 +79,6 @@ public class Vertex {
         }
     }
 
-    private synchronized void removeLarva() {
-        this.numberOfLarvae.decrementAndGet();
-
-        for (LarvaeSubscriber subscriber : this.larvaeSubscribers) {
-            subscriber.onLarvaeRemoved();
-        }
-    }
-
     public AtomicInteger getNumberOfLarvae() {
         return this.numberOfLarvae;
     }
@@ -106,7 +100,6 @@ public class Vertex {
     }
 
     public void addRedAnt(Ant ant) {
-        // System.out.println("adding red ant");
         try {
             this.redAnts.add(ant);
         } catch (IllegalStateException e) {
@@ -159,6 +152,11 @@ public class Vertex {
         }
     }
 
+    /**
+     * Command to be executed in the vertex
+     *
+     * @param command
+     */
     public void addCommand(Command command) {
         try {
             commandQueue.add(command);
@@ -171,27 +169,6 @@ public class Vertex {
     public BlockingQueue<Command> getCommandQueue() {
         return commandQueue;
     }
-
-    // public Command pollCommand() {
-    // return commandQueue.poll();
-    // }
-
-    // public void tryExecuteCommand() {
-    // // TODO: own threads?
-    // // try {
-    // // Command command = commandQueue.take();
-    // Command command = commandQueue.poll();
-    // if (command == null) {
-    // return;
-    // }
-    // System.out.println("Vertex is executing command");
-
-    // command.execute();
-    // // }void catch (InterruptedException e) {
-    // // System.err.println("Error while waiting for command");
-    // // e.printStackTrace();
-    // // }
-    // }
 
     public double distanceTo(Vertex vertex) {
         return Math.sqrt(Math.pow(this.x - vertex.getX(), 2) + Math.pow(this.y - vertex.getY(), 2));
@@ -212,5 +189,13 @@ public class Vertex {
 
         return sb.toString();
 
+    }
+
+    private synchronized void removeLarva() {
+        this.numberOfLarvae.decrementAndGet();
+
+        for (LarvaeSubscriber subscriber : this.larvaeSubscribers) {
+            subscriber.onLarvaeRemoved();
+        }
     }
 }

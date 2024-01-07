@@ -4,6 +4,8 @@ import ants.anttypes.Ant;
 
 /**
  * AntThread
+ *
+ * Thread responsible for running an ant
  */
 public class AntThread extends Thread {
     Ant ant;

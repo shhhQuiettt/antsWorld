@@ -5,6 +5,8 @@ import ants.map.Vertex;
 
 /**
  * CommandExecuter
+ *
+ * Thread responsible for executing commands
  */
 public class CommandExecutor extends Thread {
     Vertex vertex;

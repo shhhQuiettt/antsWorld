@@ -26,6 +26,8 @@ import ants.threads.VertexInfoThread;
 
 /**
  * WorldManager
+ *
+ * Main class responsible for running the simulation
  */
 
 public class WorldManager implements AntDeathSubscriber {
@@ -47,18 +49,18 @@ public class WorldManager implements AntDeathSubscriber {
     private HashMap<Ant, AntThread> antThreadMap = new HashMap<Ant, AntThread>();
 
     public WorldManager(WorldConfig config) {
-        this.map = Map.generateRandomMap(config.vertexNumber,
-                config.stoneProbability,
-                config.leafProbability,
-                config.width,
-                config.height,
-                config.vertexNeighborhoodSize,
-                config.maxLarvaePerVertex);
+        this.map = Map.generateRandomMap(config.getVertexNumber(),
+                config.getStoneProbability(),
+                config.getLeafProbability(),
+                config.getWorldWidth(),
+                config.getWorldHeight(),
+                config.getVertexNeighborhoodSize(),
+                config.getMaxLarvaePerVertex());
 
         this.config = config;
         this.ants = new ArrayList<Ant>();
         this.antThreads = new ArrayList<AntThread>();
-        this.commandExecutors = new ArrayList<CommandExecutor>(config.vertexNumber);
+        this.commandExecutors = new ArrayList<CommandExecutor>(config.getVertexNumber());
 
         this.redAntFactory = new RedAntFactory(map.getRedAnthill(), map.getBlueAnthill());
         this.blueAntFactory = new BlueAntFactory(map.getBlueAnthill(), map.getRedAnthill());
@@ -72,7 +74,7 @@ public class WorldManager implements AntDeathSubscriber {
                     this.registerNewAnt(ant);
                 });
 
-        this.gui = new Gui(this.config.width, this.config.height, antCreationButtonPanel);
+        this.gui = new Gui(this.config.getWorldWidth(), this.config.getWorldHeight(), antCreationButtonPanel);
 
         for (Vertex v : this.map.getVertices()) {
             this.addVertexToGui(v);
@@ -120,7 +122,12 @@ public class WorldManager implements AntDeathSubscriber {
     }
 
     private void addLinesBetweenNeighboursToGui() {
-        for (Vertex v : this.map.getVertices()) {
+        ArrayList<Vertex> verticesToConnect = new ArrayList<>();
+        verticesToConnect.addAll(this.map.getVertices());
+        verticesToConnect.add(this.map.getRedAnthill());
+        verticesToConnect.add(this.map.getBlueAnthill());
+
+        for (Vertex v : verticesToConnect) {
             for (Vertex neighbour : v.getNeighbors()) {
                 Point p1 = new Point(v.getX(), v.getY());
                 Point p2 = new Point(neighbour.getX(), neighbour.getY());
@@ -137,43 +144,6 @@ public class WorldManager implements AntDeathSubscriber {
 
                 this.gui.addLine(p1, p2);
             }
-        }
-
-        for (Vertex neighbour : this.map.getRedAnthill().getNeighbors()) {
-            Point p1 = new Point(this.map.getRedAnthill().getX(), this.map.getRedAnthill().getY());
-            Point p2 = new Point(neighbour.getX(), neighbour.getY());
-
-            // make them a bit nearer to themselves
-            double dx = p2.x - p1.x;
-            double dy = p2.y - p1.y;
-
-            double ratio = 0.8;
-            p2.x = (int) (p1.x + ratio * dx);
-            p2.y = (int) (p1.y + ratio * dy);
-
-            p1.x = (int) (p1.x + (1 - ratio) * dx);
-            p1.y = (int) (p1.y + (1 - ratio) * dy);
-
-            this.gui.addLine(p1, p2);
-        }
-
-        for (Vertex neighbour : this.map.getBlueAnthill().getNeighbors()) {
-            Point p1 = new Point(this.map.getBlueAnthill().getX(), this.map.getRedAnthill().getY());
-            Point p2 = new Point(neighbour.getX(), neighbour.getY());
-
-            // make them a bit nearer to themselves
-            double dx = p2.x - p1.x;
-            double dy = p2.y - p1.y;
-
-            double ratio = 0.8;
-            p2.x = (int) (p1.x + ratio * dx);
-            p2.y = (int) (p1.y + ratio * dy);
-
-            p1.x = (int) (p1.x + (1 - ratio) * dx);
-            p1.y = (int) (p1.y + (1 - ratio) * dy);
-
-            this.gui.addLine(p1, p2);
-
         }
 
     }
@@ -301,11 +271,8 @@ public class WorldManager implements AntDeathSubscriber {
 
     @Override
     public synchronized void onAntDeath(Ant ant) {
-        // AntThread antThread = this.antThreadMap.get(ant);
+        AntThread antThread = this.antThreadMap.get(ant);
 
-        // // kill thread
-        // // antThread.stop();
-        // antThread.interrupt();
-        // this.ants.remove(ant);
+        antThread.interrupt();
     }
 }

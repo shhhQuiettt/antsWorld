@@ -9,8 +9,14 @@ import ants.anttypes.AntColor;
 
 /**
  * MapBuilder
+ *
+ * Builder helping to generate a map
  */
 class MapBuilder {
+    private static double distance(Vertex v1, Vertex v2) {
+        return Math.sqrt(Math.pow(v1.getX() - v2.getX(), 2) + Math.pow(v1.getY() - v2.getY(), 2));
+    }
+
     private Map map;
 
     public MapBuilder(int width, int height, int vertexNumber) {
@@ -25,25 +31,6 @@ class MapBuilder {
         for (int i = 0; i < this.map.getVertexNumber(); i++) {
             map.addVertex(generateRandomVertex(stoneProbability, leafProbability, maxLarvaePerVertex));
         }
-    }
-
-    private Vertex generateRandomVertex(double stoneProbability, double leafProbability,
-            int maxLarvaePerVertex) {
-        Point position = generateRandomNonOverlappingPosition();
-
-        boolean isStone = Math.random() < stoneProbability;
-        boolean isLeaf = !isStone && Math.random() < leafProbability;
-
-        Vertex vertex = new Vertex(position.x, position.y, isLeaf, isStone);
-
-        for (int i = 1; i <= maxLarvaePerVertex; i++) {
-
-            if (Math.random() < 0.36) {
-                vertex.putLarva();
-            }
-        }
-
-        return vertex;
     }
 
     public void generateAnthills() {
@@ -70,6 +57,25 @@ class MapBuilder {
             }
         }
 
+    }
+
+    private Vertex generateRandomVertex(double stoneProbability, double leafProbability,
+            int maxLarvaePerVertex) {
+        Point position = generateRandomNonOverlappingPosition();
+
+        boolean isStone = Math.random() < stoneProbability;
+        boolean isLeaf = !isStone && Math.random() < leafProbability;
+
+        Vertex vertex = new Vertex(position.x, position.y, isLeaf, isStone);
+
+        for (int i = 1; i <= maxLarvaePerVertex; i++) {
+
+            if (Math.random() < 0.36) {
+                vertex.putLarva();
+            }
+        }
+
+        return vertex;
     }
 
     private Point generateRandomNonOverlappingPosition() {
@@ -133,9 +139,5 @@ class MapBuilder {
         }
 
         return neighbors;
-    }
-
-    private static double distance(Vertex v1, Vertex v2) {
-        return Math.sqrt(Math.pow(v1.getX() - v2.getX(), 2) + Math.pow(v1.getY() - v2.getY(), 2));
     }
 }

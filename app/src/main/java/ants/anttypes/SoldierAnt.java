@@ -8,6 +8,7 @@ import ants.map.Anthill;
 
 /**
  * SoldierAnt
+ * A soldier ant is an ant that can attack other ants.
  */
 public class SoldierAnt extends Ant implements Attacking {
     public SoldierAnt(String name, int health, int strength, Anthill initialAnthill, Anthill enemyAnthil) {

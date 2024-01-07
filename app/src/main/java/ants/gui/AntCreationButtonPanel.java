@@ -18,6 +18,9 @@ import ants.anttypes.RedAntFactory;
 
 /**
  * AntCreationButtonPanel
+ *
+ * This class is responsible for creating the buttons that will be used to create
+ * ants.
  */
 public class AntCreationButtonPanel extends JPanel {
 
@@ -27,8 +30,6 @@ public class AntCreationButtonPanel extends JPanel {
 
     public AntCreationButtonPanel(RedAntFactory redAntFactory, BlueAntFactory blueAntFactory,
             Consumer<Ant> onAntCreation) {
-        // this.redAntFactory = redAntFactory;
-        // this.blueAntFactory = blueAntFactory;
         this.setBackground(
                 new Color(30, 30, 30));
 
@@ -38,7 +39,6 @@ public class AntCreationButtonPanel extends JPanel {
                 buttonHeight));
 
         JButton redSoldierButton = new JButton("Red Soldier");
-        // redSoldierButton.setBounds(0, 0, buttonWidth, buttonHeight);
         redSoldierButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -49,8 +49,6 @@ public class AntCreationButtonPanel extends JPanel {
         redSoldierButton.setVisible(true);
 
         JButton redCollectorButton = new JButton("Red Collector");
-        // redCollectorButton.setBounds(1 * buttonWidth, buttonHeight, buttonWidth,
-        // buttonHeight);
         redCollectorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -61,8 +59,6 @@ public class AntCreationButtonPanel extends JPanel {
         redCollectorButton.setVisible(true);
 
         JButton blueWorkerButton = new JButton("Blue Worker");
-        // blueWorkerButton.setBounds(2 * buttonWidth, 2 * buttonHeight, buttonWidth,
-        // buttonHeight);
         blueWorkerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,8 +69,6 @@ public class AntCreationButtonPanel extends JPanel {
         blueWorkerButton.setVisible(true);
 
         JButton blueBlundererButton = new JButton("Blue Cannon Fodder");
-        // blueBlundererButton.setBounds(3 * buttonWidth, 3 * buttonHeight, buttonWidth,
-        // buttonHeight);
         blueBlundererButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -85,8 +79,6 @@ public class AntCreationButtonPanel extends JPanel {
         blueBlundererButton.setVisible(true);
 
         JButton redBlundererButton = new JButton("Red Blunderer");
-        // redBlundererButton.setBounds(3 * buttonWidth, 3 * buttonHeight, buttonWidth,
-        // buttonHeight);
         redBlundererButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

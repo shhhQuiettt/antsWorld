@@ -7,6 +7,8 @@ import ants.map.Vertex;
 
 /**
  * ExplosionCommand
+ * Command that is issued to explode a vertex,
+ * killing all ants in it
  */
 public class ExplosionCommand extends Command {
     private Ant attacker;

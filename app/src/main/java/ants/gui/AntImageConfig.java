@@ -2,6 +2,8 @@ package ants.gui;
 
 /**
  * AntImageConfig
+ *
+ * Stores the image names for the ant various states
  */
 public class AntImageConfig {
     private String movingImageName;

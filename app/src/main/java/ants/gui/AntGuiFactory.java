@@ -12,6 +12,8 @@ import ants.anttypes.WorkerAnt;
 
 /**
  * RedAntGuiFactory
+ *
+ * Factory for creating AntGui objects
  */
 public class AntGuiFactory {
     private final HashMap<String, AntImageConfig> antImagesConfigs = new HashMap<>();
@@ -59,13 +61,10 @@ public class AntGuiFactory {
     }
 
     public AntGui newBlundererAntGui(BlundererAnt ant) {
-        // return new LarveableAntGui(ant, ant, this.antImagesConfigs.get("blunderer"));
         return new AntGui(ant, this.antImagesConfigs.get("blunderer"));
     }
 
     public AntGui newWorkerAntGui(WorkerAnt ant) {
-        // TODO: fix this shit
-        // return new LarveableAntGui(ant, ant, this.antImagesConfigs.get("worker"));
         return new AntGui(ant, this.antImagesConfigs.get("worker"));
     }
 

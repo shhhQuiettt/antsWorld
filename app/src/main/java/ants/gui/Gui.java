@@ -20,14 +20,15 @@ import javax.swing.Timer;
 
 /**
  * Gui
+ *
+ * Main class responsible for displaying the frame and all the components
  */
 public class Gui {
     private JFrame frame;
 
     private JPanel world;
     private JPanel buttonPanel;
-    // private JPanel infoPanel;
-    //
+
     String antInfoDefaultText = "[Click an Ant to see the info]";
     String vertexDefaultInfoText = "[Click a Vertex to see the info]";
 
@@ -41,8 +42,6 @@ public class Gui {
     private ArrayList<Line> lines = new ArrayList<Line>();
 
     long startTime = System.currentTimeMillis();
-
-    // private Lock mutex = new ReentrantLock();
 
     public Gui(int worldWidth, int worldHeight, JPanel buttonPanel) {
         int buttonPanelHeight = 100;
@@ -86,6 +85,13 @@ public class Gui {
         frame.setVisible(true);
     }
 
+
+    /**
+     * Allows for adding an action to be performed when the user clicks 
+     * outside of any sprite
+     *
+     * @param onUnfocus Action to be performed
+     */
     public void addUnfocusListener(Runnable onUnfocus) {
         this.frame.addMouseListener(new MouseListener() {
             @Override
@@ -124,6 +130,12 @@ public class Gui {
         });
     }
 
+
+    /**
+     * Adds an immovable sprite to the world
+     *
+     * @param sprite
+     */
     public void addStaticSprite(Sprite sprite) {
         this.sprites.add(sprite);
         this.world.add(sprite);
@@ -131,6 +143,12 @@ public class Gui {
         sprite.setVisible(true);
     }
 
+
+    /**
+     * Adds a movable sprite to the world
+     *
+     * @param animatedSprite
+     */
     public void addUpdatableSprite(UpdatableSprite animatedSprite) {
         this.updatebleComponents.add(animatedSprite);
         this.world.add(animatedSprite);
@@ -139,6 +157,17 @@ public class Gui {
         animatedSprite.setVisible(true);
     }
 
+    public void removeUpdatableSprite(UpdatableSprite animatedSprite) {
+        this.updatebleComponents.remove(animatedSprite);
+        this.world.remove(animatedSprite);
+    }
+
+    /**
+     * Creates a line between two points
+     *
+     * @param start
+     * @param end
+     */
     public void addLine(Point start, Point end) {
         Line line = new Line(start, end);
 
@@ -147,11 +176,16 @@ public class Gui {
         line.setPosition();
 
         line.setVisible(true);
-        // this.world.setComponentZOrder(l, 1);
 
         this.world.repaint();
     }
 
+    /**
+     * Sets the text of the ant info panel
+     * When null, the default text is displayed
+     *
+     * @param text Text to be displayed
+     */
     public void setAntInfo(String text) {
         if (text == null) {
             this.antInfo.setText(this.antInfoDefaultText);
@@ -160,6 +194,12 @@ public class Gui {
         this.antInfo.setText(convertStringToHtml(text));
     }
 
+    /**
+     * Sets the text of the vertex info panel
+     * When null, the default text is displayed
+     *
+     * @param text
+     */
     public void setVertexInfo(String text) {
         if (text == null) {
             this.vertexInfo.setText(this.vertexDefaultInfoText);
@@ -168,19 +208,10 @@ public class Gui {
         this.vertexInfo.setText(convertStringToHtml(text));
     }
 
-    private String convertStringToHtml(String text) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<html><p>");
-        sb.append(text.replaceAll("\n", "<br>"));
-        sb.append("</p></html>");
-        return sb.toString();
-    }
 
-    public void removeUpdatableSprite(UpdatableSprite animatedSprite) {
-        this.updatebleComponents.remove(animatedSprite);
-        this.world.remove(animatedSprite);
-    }
-
+    /**
+     * Initiates the timer that updates the world every frame
+     */
     public void start() {
         Timer timer = new Timer(this.milisecondPerFrame, e -> {
             this.update();
@@ -190,9 +221,24 @@ public class Gui {
 
     public void update() {
         for (UpdatableSprite updatableSprite : this.updatebleComponents) {
-            updatableSprite.update(this.milisecondPerFrame);
+            updatableSprite.update();
         }
         Toolkit.getDefaultToolkit().sync();
     }
 
+
+    /**
+     * Converts a string to html
+     * Used to display newlines in JLabel
+     *
+     * @param text String to be converted
+     * @return html string
+     */
+    private static String convertStringToHtml(String text) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<html><p>");
+        sb.append(text.replaceAll("\n", "<br>"));
+        sb.append("</p></html>");
+        return sb.toString();
+    }
 }

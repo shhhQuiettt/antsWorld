@@ -15,6 +15,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+/**
+ * Sprite
+ *
+ * Abstract class representing a sprite
+ */
 public abstract class Sprite extends JLabel {
     protected BufferedImage displayedImage;
     private final int marginMultiplier = 2;
@@ -41,15 +46,6 @@ public abstract class Sprite extends JLabel {
 
     public int getImageHeight() {
         return this.displayedImage.getHeight();
-    }
-
-    protected void setPosition(int x, int y) {
-        int xLeftUpper = (int) (x - (this.getImageWidth() / 2 * this.marginMultiplier));
-        int yLeftUpper = (int) (y - (this.getImageHeight() / 2 * this.marginMultiplier));
-        int width = this.marginMultiplier * this.getImageWidth();
-        int height = this.marginMultiplier * this.getImageHeight();
-
-        setBounds(xLeftUpper, yLeftUpper, width, height);
     }
 
     public void setDisplayedImage(BufferedImage displayedImage) {
@@ -81,16 +77,6 @@ public abstract class Sprite extends JLabel {
         setDisplayedImage(newImage);
     }
 
-    protected BufferedImage loadImage(String filename) {
-        try {
-            return ImageIO.read(new File("images/" + filename + ".png"));
-        } catch (IOException e) {
-            System.err.println("Error while loading image: " + filename + ".png");
-            System.err.println("\t System message: " + e.getMessage());
-            return null;
-        }
-    }
-
     public Point getPosition() {
         return getBounds().getLocation();
     }
@@ -108,5 +94,24 @@ public abstract class Sprite extends JLabel {
         Rectangle imageArea = new Rectangle(allAread.x + this.getImageWidth() / 2, allAread.y + this.getImageHeight() / 2, this.getImageWidth(), this.getImageHeight());
 
         return imageArea.contains(point);
+    }
+
+    protected void setPosition(int x, int y) {
+        int xLeftUpper = (int) (x - (this.getImageWidth() / 2 * this.marginMultiplier));
+        int yLeftUpper = (int) (y - (this.getImageHeight() / 2 * this.marginMultiplier));
+        int width = this.marginMultiplier * this.getImageWidth();
+        int height = this.marginMultiplier * this.getImageHeight();
+
+        setBounds(xLeftUpper, yLeftUpper, width, height);
+    }
+
+    protected BufferedImage loadImage(String filename) {
+        try {
+            return ImageIO.read(new File("images/" + filename + ".png"));
+        } catch (IOException e) {
+            System.err.println("Error while loading image: " + filename + ".png");
+            System.err.println("\t System message: " + e.getMessage());
+            return null;
+        }
     }
 }

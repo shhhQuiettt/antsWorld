@@ -1,5 +1,6 @@
 package ants.gui;
 
+import java.awt.Point;
 import java.util.LinkedList;
 
 import ants.interfaces.LarvaeSubscriber;
@@ -7,6 +8,8 @@ import ants.map.Vertex;
 
 /**
  * VertexGui
+ *
+ * This class is responsible for displaying a vertex on the screen.
  */
 public class VertexGui extends Sprite implements LarvaeSubscriber {
     Vertex vertex;
@@ -16,16 +19,14 @@ public class VertexGui extends Sprite implements LarvaeSubscriber {
         return this.vertex;
     }
 
-    private int[] getRandomAroundVertexCoords(int centerX, int centerY) {
-        int[] coords = new int[2];
+    private Point getRandomAroundVertexCoords(int centerX, int centerY) {
         double angle = Math.random() * 2 * Math.PI;
         double radius = 8 + Math.random() * 16;
 
-        coords[0] = centerX + (int) (radius * Math.cos(angle));
-        coords[1] = centerY + (int) (radius * Math.sin(angle));
+        int x = centerX + (int) (radius * Math.cos(angle));
+        int y = centerY + (int) (radius * Math.sin(angle));
 
-        return coords;
-        // return new int[] { centerX, centerY };
+        return new Point(x, y);
     }
 
     public static String getFileName(Vertex vertex) {
@@ -63,11 +64,10 @@ public class VertexGui extends Sprite implements LarvaeSubscriber {
         Sprite larva = new Sprite("larva") {
             @Override
             public void setPosition() {
-                int[] coords = VertexGui.this.getRandomAroundVertexCoords(
+                Point coords = VertexGui.this.getRandomAroundVertexCoords(
                         (int) VertexGui.this.getRelativeCenter().getX(),
                         (int) VertexGui.this.getRelativeCenter().getY());
-                // System.out.println("larva coords: " + coords[0] + " " + coords[1] + "");
-                super.setPosition(coords[0], coords[1]);
+                super.setPosition(coords.x, coords.y);
             }
         };
         larva.setPosition();

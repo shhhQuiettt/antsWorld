@@ -7,6 +7,8 @@ import ants.map.Anthill;
 
 /**
  * KamikazeAnt
+ * Ant that will explode when it sees an enemy killing
+ * all ants in the vertex
  */
 public class KamikazeAnt extends Ant implements Attacking {
     public KamikazeAnt(String name, int health, int strength, Anthill initialAnthill, Anthill enemyAnthill) {

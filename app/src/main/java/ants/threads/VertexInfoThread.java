@@ -8,6 +8,8 @@ import ants.gui.VertexGui;
 
 /**
  * VertexInfoThread
+ *
+ * Thread monitoring selected vertex and displaying its info
  */
 public class VertexInfoThread extends Thread {
     private VertexGui vertexGui = null;

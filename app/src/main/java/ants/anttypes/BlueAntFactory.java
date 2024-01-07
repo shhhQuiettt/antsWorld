@@ -5,6 +5,7 @@ import ants.map.Anthill;
 
 /**
  * BlueAntFactory
+ * Allows to create blue ants
  */
 public class BlueAntFactory {
     Anthill initialAnthill;

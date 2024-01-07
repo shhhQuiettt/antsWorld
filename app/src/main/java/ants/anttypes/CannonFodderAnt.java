@@ -4,6 +4,7 @@ import ants.map.Anthill;
 
 /**
  * CannonFodderAnt
+ * Ant that is used to distract the enemy and die
  */
 public class CannonFodderAnt extends Ant {
 

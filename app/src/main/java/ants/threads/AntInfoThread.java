@@ -1,12 +1,15 @@
 package ants.threads;
 
 import java.util.function.Consumer;
-import ants.gui.AntGui;
 
 import javax.swing.Timer;
 
+import ants.gui.AntGui;
+
 /**
  * AntInfoThread
+ *
+ * Thread monitoring seleteced ant and writing its info to the info panel.
  */
 public class AntInfoThread extends Thread {
 
@@ -26,7 +29,6 @@ public class AntInfoThread extends Thread {
     @Override
     public void run() {
         int milisecondsPerFrame = 1000 / 60;
-
         Timer timer = new Timer(milisecondsPerFrame, e -> {
             if (antGui == null) {
                 this.writeInfo.accept(null);

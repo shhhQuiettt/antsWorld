@@ -9,6 +9,11 @@ import java.awt.Point;
 
 import javax.swing.JLabel;
 
+/**
+ * Line
+ *
+ * Class displaying a line between two points
+ */
 class Line extends JLabel {
     private Point startPoint;
     private Point endPoint;
@@ -37,22 +42,12 @@ class Line extends JLabel {
         this.setBounds(leftUpperX, leftUpperY, width, height);
     }
 
-    // @Override
-    // public Dimension getPreferredSize() {
-    // // Calculate preferred size based on start and end points
-    // int width = Math.abs(endPoint.x - startPoint.x);
-    // int height = Math.abs(endPoint.y - startPoint.y);
-    // return new Dimension(width, height);
-    // }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // Draw the line
-        // g2d.setColor(Color.BLACK);
-        // g2d.draw(new Line2D.Double(startPoint, endPoint));
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(this.lineStroke));
         g2d.drawLine(startPoint.x - getX(), startPoint.y - getY(), endPoint.x - getX(), endPoint.y - getY());

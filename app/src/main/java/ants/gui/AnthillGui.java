@@ -5,6 +5,8 @@ import ants.map.Anthill;
 
 /**
  * AnthillGui
+ *
+ * Class responsible for the graphical representation of an anthill
  */
 public class AnthillGui extends VertexGui{
     private Anthill anthill;

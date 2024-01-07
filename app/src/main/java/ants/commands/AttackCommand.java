@@ -4,6 +4,8 @@ import ants.anttypes.Ant;
 
 /**
  * AttackCommand
+ *
+ * Command that is used to attack an enemy ant
  */
 
 public class AttackCommand extends Command {

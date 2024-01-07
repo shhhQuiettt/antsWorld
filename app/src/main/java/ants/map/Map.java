@@ -6,12 +6,37 @@ import java.util.ArrayList;
  * Map
  */
 public class Map {
-    private ArrayList<Vertex> vertices = new ArrayList<>();
+    /**
+     * Method to generate a random map with given parameters
+     *
+     * @param vertexNumber
+     * @param stoneProbability
+     * @param leafProbability
+     * @param width
+     * @param height
+     * @param vertexNeighborhoodSize
+     * @param maxLarvaePerVertex
+     * @return
+     */
+    public static Map generateRandomMap(int vertexNumber, double stoneProbability, double leafProbability, int width,
+            int height, int vertexNeighborhoodSize, int maxLarvaePerVertex) {
 
+        MapBuilder mapBuilder = new MapBuilder(width, height, vertexNumber);
+
+        mapBuilder.generateAnthills();
+        mapBuilder.generateVertices(stoneProbability, leafProbability, maxLarvaePerVertex);
+
+        mapBuilder.generateNeighbors(vertexNeighborhoodSize);
+
+        return mapBuilder.collect();
+    }
+
+    private ArrayList<Vertex> vertices = new ArrayList<>();
     private Anthill redAnthill;
     private Anthill blueAnthill;
     private int width;
     private int height;
+
     private int vertexNumber;
 
     public Map(int width, int height, int vertexNumber) {
@@ -54,20 +79,6 @@ public class Map {
 
     public int getVertexNumber() {
         return vertexNumber;
-    }
-
-    public static Map generateRandomMap(int vertexNumber, double stoneProbability, double leafProbability, int width,
-            int height, int vertexNeighborhoodSize, int maxLarvaePerVertex) {
-
-        MapBuilder mapBuilder = new MapBuilder(width, height, vertexNumber);
-
-        mapBuilder.generateAnthills();
-        mapBuilder.generateVertices(stoneProbability, leafProbability, maxLarvaePerVertex);
-
-        mapBuilder.generateNeighbors(vertexNeighborhoodSize);
-
-        return mapBuilder.collect();
-
     }
 
 }

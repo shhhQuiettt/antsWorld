@@ -4,6 +4,7 @@ import ants.map.Anthill;
 
 /**
  * RedAntFactory
+ * Allows to create red ants
  */
 public class RedAntFactory {
     Anthill initialAnthill;
