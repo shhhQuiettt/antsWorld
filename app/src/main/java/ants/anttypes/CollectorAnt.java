@@ -7,6 +7,7 @@ import ants.map.Anthill;
 
 /**
  * CollectorAnt
+ * Ant which can carry larvae.
  */
 public class CollectorAnt extends Ant implements CarryLarvae {
     private AtomicInteger numberOfLarvaes = new AtomicInteger(0);
