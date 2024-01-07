@@ -146,7 +146,6 @@ public abstract class Ant {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                System.err.println("While waiting for ant to get off the stone, Ant was interrupted");
                 Thread.currentThread().interrupt();
             }
         }
@@ -300,7 +299,6 @@ public abstract class Ant {
         try {
             this.leaveVertexSemaphore.acquire();
         } catch (InterruptedException e) {
-            System.err.println("While waiting for leaveVertexSemaphore to be released, Ant was interrupted");
             Thread.currentThread().interrupt();
         }
 
@@ -332,7 +330,6 @@ public abstract class Ant {
             try {
                 Thread.sleep(16);
             } catch (InterruptedException e) {
-                System.err.println("While waiting for ant to move, Ant was interrupted");
                 Thread.currentThread().interrupt();
             }
         }
@@ -351,7 +348,6 @@ public abstract class Ant {
         try {
             Thread.sleep(getRandomWaitingTime());
         } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in Ant");
             Thread.currentThread().interrupt();
         }
     }
@@ -361,7 +357,6 @@ public abstract class Ant {
         try {
             command.executionSemaphore.acquire();
         } catch (InterruptedException e) {
-            System.err.println("While waiting for command to be executed, Ant was interrupted");
             Thread.currentThread().interrupt();
         }
     }

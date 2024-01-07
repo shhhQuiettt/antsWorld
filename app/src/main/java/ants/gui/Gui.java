@@ -96,7 +96,6 @@ public class Gui {
         this.frame.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                System.out.println("ololo");
                 for (Sprite sprite : sprites) {
                     if (sprite.imageContains(e.getPoint())) {
                         return;
