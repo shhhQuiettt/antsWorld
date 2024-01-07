@@ -3,6 +3,7 @@ package ants;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Vertex
@@ -16,7 +17,9 @@ public class Vertex {
 
     private boolean isLeaf;
     private boolean isStone;
-    private int numberOfLarvae = 0;
+
+    private AtomicInteger numberOfLarvae = new AtomicInteger(0);
+    private ArrayList<LarvaeSubscriber> larvaeSubscribers = new ArrayList<>();
 
     private ArrayList<Vertex> neighbors = new ArrayList<>();
 
@@ -53,19 +56,52 @@ public class Vertex {
         return isStone;
     }
 
-    public synchronized boolean tryToGetLarve() {
-        if (this.numberOfLarvae > 0) {
-            this.numberOfLarvae--;
+    public synchronized boolean tryToGetLarva() {
+        if (this.numberOfLarvae.get() > 0) {
+            this.removeLarva();
             return true;
         }
         return false;
     }
 
-    public synchronized void putLarve() {
-        this.numberOfLarvae++;
+    public synchronized void putLarva() {
+        this.numberOfLarvae.incrementAndGet();
+
+        for (LarvaeSubscriber subscriber : this.larvaeSubscribers) {
+            subscriber.onLarvaeAdded();
+        }
+    }
+
+    private synchronized void removeLarva() {
+        this.numberOfLarvae.decrementAndGet();
+
+        for (LarvaeSubscriber subscriber : this.larvaeSubscribers) {
+            subscriber.onLarvaeRemoved();
+        }
+    }
+
+    public AtomicInteger getNumberOfLarvae() {
+        return this.numberOfLarvae;
+    }
+
+    public void subscribeLarvae(LarvaeSubscriber subscriber) {
+        this.larvaeSubscribers.add(subscriber);
+    }
+
+    public void unsubscribeLarvae(LarvaeSubscriber subscriber) {
+        this.larvaeSubscribers.remove(subscriber);
+    }
+
+    public BlockingQueue<Ant> getRedAnts() {
+        return redAnts;
+    }
+
+    public BlockingQueue<Ant> getBlueAnts() {
+        return blueAnts;
     }
 
     public void addRedAnt(Ant ant) {
+        // System.out.println("adding red ant");
         try {
             this.redAnts.add(ant);
         } catch (IllegalStateException e) {
@@ -83,7 +119,7 @@ public class Vertex {
 
     public void removeAnt(Ant ant) {
         try {
-            if (ant.getColor() == Color.RED) {
+            if (ant.getColor() == AntColor.RED) {
                 redAnts.remove(ant);
             } else {
                 blueAnts.remove(ant);
@@ -107,12 +143,11 @@ public class Vertex {
 
     public Ant getBlueAnt() {
         Ant ant = blueAnts.peek();
-        System.out.println("Getting blue ant: " + ant);
         return ant;
     }
 
     public void addAnt(Ant ant) {
-        if (ant.getColor() == Color.RED) {
+        if (ant.getColor() == AntColor.RED) {
             this.addRedAnt(ant);
         } else {
             this.addBlueAnt(ant);
@@ -128,24 +163,45 @@ public class Vertex {
         }
     }
 
-    public void tryExecuteCommand() {
-        // TODO: own threads?
-        // try {
-        // Command command = commandQueue.take();
-        Command command = commandQueue.poll();
-        if (command == null) {
-            return;
-        }
-        System.out.println("Vertex is executing command");
-
-        command.execute();
-        // } catch (InterruptedException e) {
-        // System.err.println("Error while waiting for command");
-        // e.printStackTrace();
-        // }
+    public BlockingQueue<Command> getCommandQueue() {
+        return commandQueue;
     }
+
+    // public Command pollCommand() {
+    // return commandQueue.poll();
+    // }
+
+    // public void tryExecuteCommand() {
+    // // TODO: own threads?
+    // // try {
+    // // Command command = commandQueue.take();
+    // Command command = commandQueue.poll();
+    // if (command == null) {
+    // return;
+    // }
+    // System.out.println("Vertex is executing command");
+
+    // command.execute();
+    // // }void catch (InterruptedException e) {
+    // // System.err.println("Error while waiting for command");
+    // // e.printStackTrace();
+    // // }
+    // }
 
     public double distanceTo(Vertex vertex) {
         return Math.sqrt(Math.pow(this.x - vertex.getX(), 2) + Math.pow(this.y - vertex.getY(), 2));
+    }
+
+    public String info() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Vertex at: " + this.x + " " + this.y + "\n");
+        sb.append("isLeaf: " + this.isLeaf + "\n");
+        sb.append("isStone: " + this.isStone + "\n");
+        sb.append("Number of red ants: " + this.redAnts.size() + "\n");
+        sb.append("Number of blue ants: " + this.blueAnts.size() + "\n");
+        sb.append("Number of larvae: " + this.numberOfLarvae.get() + "\n");
+
+        return sb.toString();
+
     }
 }

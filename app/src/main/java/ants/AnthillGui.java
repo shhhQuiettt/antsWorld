@@ -3,18 +3,18 @@ package ants;
 /**
  * AnthillGui
  */
-public class AnthillGui extends Sprite{
+public class AnthillGui extends VertexGui{
     private Anthill anthill;
 
     private static String getFileName(Anthill anthill) {
-        if (anthill.getColor() == Color.RED) {
+        if (anthill.getColor() == AntColor.RED) {
             return "anthillRed";
         } else {
             return "anthillBlue";
         }
     }
     AnthillGui(Anthill anthill) {
-        super(getFileName(anthill));
+        super(anthill, getFileName(anthill));
         this.anthill = anthill;
     }
 

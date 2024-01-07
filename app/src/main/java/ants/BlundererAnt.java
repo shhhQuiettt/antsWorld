@@ -4,34 +4,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.ArrayList;
 
 /**
- * CollectorAnt
+ * BlundererAnt
  */
-public class WorkerAnt extends Ant implements Attacking, CarryLarvae, LarvaeInfoEmiter {
-    private AtomicInteger numberOfLarvaes = new AtomicInteger(0);
+public class BlundererAnt extends Ant implements CarryLarvae {
+    AtomicInteger numberOfLarvaes = new AtomicInteger(0);
+    double probabilityOfDroppingLarva;
 
     private ArrayList<LarvaeSubscriber> larvaeSubscribers = new ArrayList<>();
 
-    public WorkerAnt(String name, int health, int strength, Anthill initialAnthill, Anthill enemyAnthill) {
-        super(name, AntColor.BLUE, health, strength, initialAnthill, enemyAnthill);
+    public BlundererAnt(String name, int health, int strength, double probabilityOfDroppingLarva,
+            Anthill initialAnthill, Anthill enemyAnthill) {
+        super(name, AntColor.RED, health, strength, initialAnthill, enemyAnthill);
+        this.probabilityOfDroppingLarva = probabilityOfDroppingLarva;
     }
 
     @Override
-    protected void doActionsInHomeAnthill() {
-        this.setState(AntState.SCANNING);
-        this.dropAllLarvae();
+    public void doActionsInVertex() {
+        this.tryToHide();
+
         try {
             Thread.sleep(getRandomWaitingTime());
         } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in WorkerAnt");
+            System.err.println("While BlundererAnt was waiting, it was interrupted");
+            e.printStackTrace();
         }
-    }
-
-
-    @Override
-    protected void doActionsInVertex() {
-        this.setState(AntState.SCANNING);
-
-        this.tryToHide();
 
         this.tryToPickLarve();
 
@@ -39,40 +35,23 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae, LarvaeInfo
             this.setGoingHome(true);
         }
 
-        this.tryToAttack();
-
-        try {
-            Thread.sleep(getRandomWaitingTime());
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting in WorkerAnt");
+        if (this.isGoingHome() && this.isCarryingLarvae()) {
+            if (this.hasDroppedLarve()) {
+                this.dropLarve();
+            }
         }
 
-        this.tryToAttack();
-
-        if (this.isHidden()) {
+        if (this.isHidden())
             this.unhide();
-        }
     }
 
-    ////////////
-    //
-
-    public Ant getEnemy() {
-        if (currentVertex.redAntInVertex()) {
-            return currentVertex.getRedAnt();
-        }
-        return null;
+    @Override
+    public void doActionsInHomeAnthill() {
+        this.dropAllLarvae();
     }
 
-    private void tryToAttack() {
-        Ant potentialVictim = this.getEnemy();
-        if (potentialVictim != null) {
-            this.setState(AntState.ATTACKING);
-            this.attack(potentialVictim);
-            this.setState(AntState.SCANNING);
-            this.setGoingHome(true);
-        }
-
+    private boolean hasDroppedLarve() {
+        return Math.random() < this.probabilityOfDroppingLarva;
     }
 
     @Override
@@ -107,7 +86,7 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae, LarvaeInfo
     @Override
     public void dropLarve() {
         if (this.numberOfLarvaes.get() == 0)
-            throw new IllegalStateException("Cannot drop larve when not carrying any");
+            return;
 
         this.numberOfLarvaes.decrementAndGet();
         this.currentVertex.putLarva();
@@ -118,20 +97,6 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae, LarvaeInfo
         while (this.isCarryingLarvae()) {
             this.dropLarve();
         }
-    }
-
-    @Override
-    protected void beforeDie() {
-        if (this.isCarryingLarvae())
-            this.dropAllLarvae();
-    }
-
-    @Override
-    public void attack(Ant victim) {
-        // victim.decreaseHealth(this.strength);
-
-        AttackCommand attackRequest = new AttackCommand(this, victim);
-        this.sendCommandAndAwaitExecution(attackRequest);
     }
 
     public void subscribeLarvae(LarvaeSubscriber subscriber) {
@@ -148,7 +113,6 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae, LarvaeInfo
         }
     }
 
-
     private void notifyLarvaeSubscribersForDrop() {
         for (LarvaeSubscriber subscriber : this.larvaeSubscribers) {
             subscriber.onLarvaeRemoved();
@@ -156,9 +120,16 @@ public class WorkerAnt extends Ant implements Attacking, CarryLarvae, LarvaeInfo
     }
 
     @Override
+    protected void beforeDie() {
+        if (this.isCarryingLarvae())
+            this.dropAllLarvae();
+    }
+
+    @Override
     public String info() {
         StringBuffer sb = new StringBuffer( super.info() );
         sb.append("Number of Larvae: " + this.numberOfLarvaes.get() + "\n");
+        sb.append("Probability of dropping a larva: " + this.probabilityOfDroppingLarva + "\n");
         return sb.toString();
     }
 }

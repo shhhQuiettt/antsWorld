@@ -3,6 +3,7 @@ package ants;
 /**
  * AttackCommand
  */
+
 public class AttackCommand extends Command {
     private Ant victim;
     private Ant attacker;
@@ -20,30 +21,28 @@ public class AttackCommand extends Command {
         victim.leaveVertexSemaphore.release();
     }
 
-    private void onReturn() {
-        this.unlockVictim();
-        this.executionSemaphore.release();
-    }
-
     @Override
     protected boolean execute() {
-        System.out.println("AttackCommand is executing. Victim is " + victim.getName() + "");
-
         if (!tryLockVictim()) {
-            System.out.println("lock failed");
-            onReturn();
+            this.executionSemaphore.release();
             return false;
         }
 
-        if (!this.attacker.isAlive() || !this.victim.isAlive() ) {
-            System.out.println("Atacker or Victim is already dead");
-            onReturn();
+        if (!this.attacker.isAlive() || !this.victim.isAlive() || this.victim.isHidden()) {
+            this.unlockVictim();
+            this.executionSemaphore.release();
             return false;
         }
 
         victim.die();
 
-        onReturn();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.err.println("While waiting for attack to finish, Thread was interrupted");
+        }
+
+        this.executionSemaphore.release();
         return true;
     }
 

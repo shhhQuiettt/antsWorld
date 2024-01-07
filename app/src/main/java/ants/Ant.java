@@ -1,12 +1,13 @@
 package ants;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.awt.Point;
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
 
 enum AntState {
-    SCANNING, MOVING, ATTACKING, DYING, DEAD
+    SCANNING, MOVING, ATTACKING, HIDING, DYING, DEAD
 }
 
 /**
@@ -17,6 +18,7 @@ public abstract class Ant {
     protected Vertex nextVertex = null;
 
     protected Anthill homeAnthill;
+    protected Anthill enemyAnthill;
 
     // protected int x;
     // protected int y;
@@ -31,18 +33,19 @@ public abstract class Ant {
     private ArrayList<AntStateSubscriber> subscribers = new ArrayList<>();
     private ArrayList<AntDeathSubscriber> deathSubscribers = new ArrayList<>();
 
-    protected Color color;
+    protected AntColor color;
 
     protected String name;
     protected int health;
     protected int maxHealth;
     protected int strength;
+    protected boolean isHidden = false;
 
     // private final Lock mutex = new ReentrantLock();
     private final Semaphore actionsSemaphore = new Semaphore(1);
     public final Semaphore leaveVertexSemaphore = new Semaphore(1);
 
-    public Ant(String name, Color color, int health, int strength, Anthill initialAnthill) {
+    public Ant(String name, AntColor color, int health, int strength, Anthill initialAnthill, Anthill enemyAnthill) {
         this.name = name;
         this.currentVertex = initialAnthill;
         this.velocity = 1.0;
@@ -54,6 +57,7 @@ public abstract class Ant {
         this.x = initialAnthill.getX();
         this.y = initialAnthill.getY();
         this.homeAnthill = initialAnthill;
+        this.enemyAnthill = enemyAnthill;
     }
 
     public void setX(int x) {
@@ -80,6 +84,34 @@ public abstract class Ant {
         return health;
     }
 
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    protected void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
+    }
+
+    protected void hide() {
+        this.setHidden(true);
+    }
+
+    protected void unhide() {
+        this.state = AntState.SCANNING;
+        this.setHidden(false);
+    }
+
+    protected void tryToHide() {
+        if (this.currentVertex.isLeaf()) {
+            this.setState(AntState.HIDING);
+            this.hide();
+        }
+    }
+
     public int decreaseHealth(int amount) {
         this.health = Math.max(this.health - amount, 0);
 
@@ -104,6 +136,14 @@ public abstract class Ant {
 
     public synchronized void setState(AntState state) {
         if (state == this.state) {
+            return;
+        }
+
+        if (this.state == AntState.DEAD) {
+            return;
+        }
+
+        if (this.state == AntState.DYING && state != AntState.DEAD) {
             return;
         }
 
@@ -143,7 +183,7 @@ public abstract class Ant {
         }
     }
 
-    public Color getColor() {
+    public AntColor getColor() {
         return color;
     }
 
@@ -183,14 +223,12 @@ public abstract class Ant {
     private Vertex getRandomVertex() {
         ArrayList<Vertex> neighbours = currentVertex.getNeighbors();
         int index = (int) (Math.random() * neighbours.size());
-        // return neighbours.get(index);
-        // TODO: fix this
         Vertex v = neighbours.get(index);
-        if (this.currentVertex instanceof Anthill && v instanceof Anthill) {
-            return getRandomVertex();
-        } else {
-            return v;
+        while (v == this.enemyAnthill) {
+            index = (int) (Math.random() * neighbours.size());
+            v = neighbours.get(index);
         }
+        return v;
     }
 
     private Vertex getToHomeVertex() {
@@ -202,28 +240,37 @@ public abstract class Ant {
             }
         }
 
+        if (nearestHomeVertex == this.enemyAnthill) {
+            return this.getRandomVertex();
+        }
+
         return nearestHomeVertex;
     }
 
-    protected void beforeDie() {
-
-    }
-
     protected final void die() {
-        this.beforeDie();
-
-        System.out.println(this.color + " Ant " + this.name + " is dying");
-        this.setState(AntState.DYING);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            System.err.println("While waiting for ant to die, Ant was interrupted");
-            Thread.currentThread().interrupt();
+        if (!this.isAlive()) {
+            return;
         }
 
-        this.setState(AntState.DEAD);
-        this.currentVertex.removeAnt(this);
+        this.beforeDie();
+
+        this.setState(AntState.DYING);
+
+        // try {
+        // Thread.sleep(1000);
+        // } catch (InterruptedException e) {
+        // System.err.println("While waiting for ant to die, Ant was interrupted");
+        // }
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Ant.this.setState(AntState.DEAD);
+                Ant.this.currentVertex.removeAnt(Ant.this);
+            }
+        }, 1000);
+
     }
 
     protected void goToNextVertex() {
@@ -240,30 +287,32 @@ public abstract class Ant {
 
         this.nextVertex = this.chooseNextVertex();
 
-        double distance = Math.sqrt(Math.pow(this.nextVertex.getX() - this.x, 2)
-                + Math.pow(this.nextVertex.getY() - this.y, 2));
+        int xNoise = (int) (Math.random() * 60) - 30;
+        int yNoise = (int) (Math.random() * 60) - 30;
+
+        Point destination = new Point(this.nextVertex.getX() + xNoise, this.nextVertex.getY() + yNoise);
+
+        // double distance = Math.sqrt(Math.pow(this.nextVertex.getX() + xNoise - this.x, 2)
+        //         + Math.pow(this.nextVertex.getY() + yNoise - this.y, 2));
+        //
+        double distance = Math.sqrt(Math.pow(destination.getX() - this.x, 2) + Math.pow(destination.getY() - this.y, 2));
 
         this.currentVertex.removeAnt(this);
         this.currentVertex = null;
 
         double velocityScalar = this.velocity / distance;
 
-        double xVelocity = velocityScalar * (this.nextVertex.getX() - this.x);
-        double yVelocity = velocityScalar * (this.nextVertex.getY() - this.y);
+        // double xVelocity = velocityScalar * (this.nextVertex.getX() - this.x);
+        // double yVelocity = velocityScalar * (this.nextVertex.getY() - this.y);
+        double xVelocity = velocityScalar * (destination.getX() - this.x);
+        double yVelocity = velocityScalar * (destination.getY() - this.y);
 
-        // at least one pixel per frame but have to keep scale
-        // if (Math.abs(xVelocity) < 1) {
-        // xVelocity = Math.signum(xVelocity);
-        // }
-        // if (Math.abs(yVelocity) < 1) {
-        // yVelocity = Math.signum(yVelocity);
-        // }
 
-        while (!isNearCoords(this.nextVertex.getX(), this.nextVertex.getY())) {
+        while (!isNear(destination)) {
             this.x += xVelocity;
             this.y += yVelocity;
             try {
-                Thread.sleep(10);
+                Thread.sleep(16);
             } catch (InterruptedException e) {
                 System.err.println("While waiting for ant to move, Ant was interrupted");
                 // Exit thread
@@ -277,22 +326,36 @@ public abstract class Ant {
         this.leaveVertexSemaphore.release();
     }
 
-    private boolean isNearCoords(int targetX, int targetY) {
-        return (Math.abs(this.x - targetX) <= 5 * this.velocity && Math.abs(this.y - targetY) <= 5 * this.velocity);
+    protected boolean isInHomeAnthill() {
+        return this.currentVertex == this.homeAnthill;
     }
 
-    public void lockAndDoActions() {
-        // try {
-        // this.acquireActionsSemaphore();
-        // } catch (InterruptedException e) {
-        // System.err.println("While waiting for actions semaphore to be released, Ant
-        // was interrupted");
-        // }
-        // if (!this.isAlive()) {
-        // return;
-        // }
+    private boolean isNear(Point targetPoint) {
+        return (Math.abs(this.x - targetPoint.x) <= 2 * this.velocity && Math.abs(this.y - targetPoint.y) <= 2 * this.velocity);
+    }
 
-        doActionsInVertex();
+    protected static int getRandomWaitingTime() {
+        return (int) (700 + Math.random() * 1000);
+    }
+
+    public final void lockAndDoActions() {
+        this.setState(AntState.SCANNING);
+
+        if (this.isInHomeAnthill()) {
+            this.setGoingHome(false);
+            this.doActionsInHomeAnthill();
+        } else {
+            this.doActionsInVertex();
+        }
+
+        if (this.currentVertex.isStone()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.err.println("While waiting for ant to get off the stone, Ant was interrupted");
+                // Exit thread
+            }
+        }
 
         if (!this.isAlive()) {
             return;
@@ -300,10 +363,9 @@ public abstract class Ant {
 
         this.setState(AntState.MOVING);
         this.goToNextVertex();
-        this.setState(AntState.SCANNING);
     }
 
-    protected void sendCommandAndWait(Command command) {
+    protected void sendCommandAndAwaitExecution(Command command) {
         currentVertex.addCommand(command);
         try {
             command.executionSemaphore.acquire();
@@ -311,14 +373,31 @@ public abstract class Ant {
             System.err.println("While waiting for command to be released, Ant was interrupted");
             Thread.currentThread().interrupt();
         }
-
-        // try {
-        // Thread.sleep(1000);
-        // } catch (InterruptedException e) {
-        // System.err.println("While waiting for command to be executed, Ant was
-        // interrupted");
-        // }
     }
 
     protected abstract void doActionsInVertex();
+
+    protected void doActionsInHomeAnthill() {
+    }
+
+    protected void beforeDie() {
+    }
+
+    public String info() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Name: " + this.getName() + "\n");
+        sb.append("Health: " + this.getHealth() + "\n");
+        sb.append("Strength: " + this.getStrength() + "\n");
+        sb.append("Speed: " + this.getVelocity() + "\n");
+        sb.append("State: " + this.getState() + "\n");
+        sb.append("Position X: " + Math.round(this.getX() * 100) / 100.0 + "\n");
+        sb.append("Position Y: " + Math.round(this.getY() * 100) / 100.0 + "\n");
+        sb.append("Current Vertex: " + this.getCurrentVertex() + "\n");
+        sb.append("Next Vertex: " + this.nextVertex + "\n");
+        sb.append("Going home: " + this.isGoingHome() + "\n");
+        sb.append("Is hidden: " + this.isHidden() + "\n");
+        sb.append("Is alive: " + this.isAlive() + "\n");
+        return sb.toString();
+    }
+
 }

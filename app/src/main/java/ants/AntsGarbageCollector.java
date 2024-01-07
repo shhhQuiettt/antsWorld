@@ -6,27 +6,28 @@
 // /**
 //  * AntsGarbageCollector
 //  */
-// public class AntsGarbageCollector implements AntDeathSubscriber {
+// public class AntsGarbageCollector extends Thread implements AntDeathSubscriber {
 //     HashMap<Ant, AntThread> antThreads;
-//     ArrayList<Ant> ants;
-//     ArrayList<AntGui> antGuis;
-
 
 //     @Override
 //     public synchronized void onAntDeath(Ant ant) {
-//         AntThread antThread = this.antThreads.get(ant);
-//         this.antGuis.remove(ant.getAntGui());
-
-//         antThread.interrupt();
-//         this.antThreads.remove(ant);
-//         this.ants.remove(ant);
+//         this.run();
 //     }
 
     
-//     public AntsGarbageCollector(ArrayList<Ant> ants, ArrayList<AntGui> antGuis, HashMap<Ant, AntThread> antThreads, Lock guiLock) {
+//     public AntsGarbageCollector(HashMap<Ant, AntThread> antThreads) {
 //         this.antThreads = antThreads;
-//         this.ants = ants;
-//         this.antGuis = antGuis;
 //     }
+
+//     @Override
+//     public void run() {
+//         AntThread antThread = this.antThreads.get(ant);
+
+//         antThread.stop();
+//         this.antThreads.remove(ant);
+//     }
+
+//     // block, waiting for ant death
+
     
 // }

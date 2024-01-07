@@ -1,12 +1,10 @@
-package ants;
+// package ants;
 
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
-/**
- * gGui
- */
-public class gGui {
+// /**
+//  * gGui
+//  */
+// public class gGui {
 
     
-}
+// }

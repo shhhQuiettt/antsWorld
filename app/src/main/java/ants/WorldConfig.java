@@ -5,17 +5,18 @@ package ants;
  */
 public class WorldConfig {
     public final int vertexNumber;
+    public final int vertexNeighborhoodSize;
     public final double stoneProbability;
     public final double leafProbability;
+    public final int maxLarvaePerVertex;
     public final int width;
     public final int height;
     public final int maxRedAnts;
     public final int maxBlueAnts;
     public final int initialRedAnts;
     public final int initialBlueAnts;
-    public final int vertexNeighborhoodSize;
 
-    public WorldConfig(int vertexNumber, double stoneProbability, double leafProbability, int width, int height, int maxRedAnts, int maxBlueAnts, int initialRedAnts, int initialBlueAnts, int vertexNeighborhoodSize) {
+    public WorldConfig(int vertexNumber, double stoneProbability, double leafProbability, int width, int height, int maxRedAnts, int maxBlueAnts, int initialRedAnts, int initialBlueAnts, int vertexNeighborhoodSize, int maxLarvaePerVertex) {
         this.vertexNumber = vertexNumber;
         this.vertexNeighborhoodSize = vertexNeighborhoodSize;
 
@@ -29,6 +30,7 @@ public class WorldConfig {
 
         this.initialRedAnts = initialRedAnts;
         this.initialBlueAnts = initialBlueAnts;
+        this.maxLarvaePerVertex = maxLarvaePerVertex;
 
         if (this.initialRedAnts > this.maxRedAnts) {
             throw new IllegalArgumentException("initialRedAnts must be less than or equal to maxRedAnts");

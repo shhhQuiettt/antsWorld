@@ -1,6 +1,6 @@
 package ants;
 
-enum Color {
+enum AntColor {
     RED, BLUE
 }
 
@@ -8,14 +8,14 @@ enum Color {
  * Anthill
  */
 public class Anthill extends Vertex {
-    Color color;
+    AntColor color;
 
-    Anthill(int x, int y, Color color) {
+    Anthill(int x, int y, AntColor color) {
         super(x, y, false, false);
         this.color = color;
     }
 
-    public Color getColor() {
+    public AntColor getColor() {
         return this.color;
     }
 }
