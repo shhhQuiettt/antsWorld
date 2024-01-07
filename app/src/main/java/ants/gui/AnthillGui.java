@@ -1,6 +1,8 @@
 package ants.gui;
 
-import ants.*;
+import ants.anttypes.AntColor;
+import ants.map.Anthill;
+
 /**
  * AnthillGui
  */

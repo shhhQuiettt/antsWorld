@@ -1,7 +1,14 @@
 package ants.gui;
 
 import java.util.HashMap;
-import ants.*;
+
+import ants.anttypes.Ant;
+import ants.anttypes.BlundererAnt;
+import ants.anttypes.CannonFodderAnt;
+import ants.anttypes.CollectorAnt;
+import ants.anttypes.KamikazeAnt;
+import ants.anttypes.SoldierAnt;
+import ants.anttypes.WorkerAnt;
 
 /**
  * RedAntGuiFactory

@@ -1,8 +1,9 @@
 package ants.gui;
 
-import ants.*;
-
 import java.util.LinkedList;
+
+import ants.interfaces.LarvaeSubscriber;
+import ants.map.Vertex;
 
 /**
  * VertexGui

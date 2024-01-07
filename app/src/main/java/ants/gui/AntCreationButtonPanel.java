@@ -1,13 +1,20 @@
 package ants.gui;
 
-import ants.*;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.function.Consumer;
-import java.util.function.Consumer;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import ants.anttypes.Ant;
+import ants.anttypes.BlueAntFactory;
+import ants.anttypes.RedAntFactory;
+
+
 
 /**
  * AntCreationButtonPanel

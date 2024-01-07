@@ -1,14 +1,29 @@
 package ants;
 
-import ants.gui.*;
 import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Timer;
+import java.util.HashMap;
 
+import javax.sound.sampled.Line;
 import javax.swing.SwingUtilities;
 
-import java.util.HashMap;
+import ants.anttypes.Ant;
+import ants.anttypes.BlueAntFactory;
+import ants.anttypes.RedAntFactory;
+import ants.gui.AntCreationButtonPanel;
+import ants.gui.AntGui;
+import ants.gui.AntGuiFactory;
+import ants.gui.AnthillGui;
+import ants.gui.Gui;
+import ants.gui.VertexGui;
+import ants.interfaces.AntDeathSubscriber;
+import ants.map.Map;
+import ants.map.Vertex;
+import ants.threads.AntInfoThread;
+import ants.threads.AntThread;
+import ants.threads.CommandExecutor;
+import ants.threads.VertexInfoThread;
 
 /**
  * WorldManager
@@ -191,6 +206,7 @@ public class WorldManager implements AntDeathSubscriber {
                 this.gui.addLine(p1, p2);
             }
         }
+
 
         for (Vertex neighbour : this.map.getRedAnthill().getNeighbors()) {
             Point p1 = new Point(this.map.getRedAnthill().getX(), this.map.getRedAnthill().getY());

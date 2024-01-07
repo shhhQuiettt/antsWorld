@@ -40,8 +40,8 @@ public class App {
         System.out.println(config.toString());
 
 
-        // WorldManager worldManager = new WorldManager(config);
-        WorldManager worldManager = new WorldManager(debugConfig);
+        WorldManager worldManager = new WorldManager(config);
+        // WorldManager worldManager = new WorldManager(debugConfig);
         // System.out.println("running");
         try {
             Thread.sleep(1000);

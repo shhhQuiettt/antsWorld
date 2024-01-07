@@ -1,8 +1,13 @@
 package ants.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.Line2D;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+
+import javax.swing.JLabel;
 
 class Line extends JLabel {
     private Point startPoint;
@@ -12,13 +17,8 @@ class Line extends JLabel {
     public Line(Point startPoint, Point endPoint) {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
-        // this.setLayout(null);
         this.setOpaque(false);
         this.setPosition();
-
-        // int width = Math.abs(this.endPoint.x - this.startPoint.x);
-        // int height = Math.abs(this.endPoint.y - this.startPoint.y);
-        // this.setBounds(this.startPoint.x, this.startPoint.y, width, height);
     }
 
     public Line(Point startPoint, Point endPoint, float lineStroke) {

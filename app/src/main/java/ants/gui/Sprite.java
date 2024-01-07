@@ -1,11 +1,18 @@
 package ants.gui;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public abstract class Sprite extends JLabel {
     protected BufferedImage displayedImage;
@@ -15,13 +22,10 @@ public abstract class Sprite extends JLabel {
         displayedImage = this.loadImage(filename);
 
         this.setLayout(null);
-        // this.
         setIcon(new ImageIcon(displayedImage));
         this.setHorizontalAlignment(SwingConstants.CENTER);
         this.setVerticalAlignment(SwingConstants.CENTER);
         this.setOpaque(false);
-        // setPosition(0, 0);
-
     }
 
     public abstract void setPosition();

@@ -1,9 +1,10 @@
 package ants.gui;
 
 import java.awt.image.BufferedImage;
-import javax.swing.SwingUtilities;
-import java.util.ArrayList;
-import ants.*;
+
+import ants.anttypes.Ant;
+import ants.anttypes.AntState;
+import ants.interfaces.AntStateSubscriber;
 
 /**
  * AntGui
@@ -25,8 +26,8 @@ public class AntGui extends UpdatableSprite implements AntStateSubscriber {
         } else if (state == AntState.ATTACKING) {
             this.setDisplayedImage(this.attackingImage);
         } else if (state == AntState.DYING) {
-             this.setDisplayedImage(this.dyingImage);
-            
+            this.setDisplayedImage(this.dyingImage);
+
         } else if (state == AntState.HIDING) {
             this.updateOpacity(0.5f);
         } else if (state == AntState.DEAD) {
@@ -35,7 +36,6 @@ public class AntGui extends UpdatableSprite implements AntStateSubscriber {
             this.setDisplayedImage(this.movingImage);
         }
     }
-
 
     public AntGui(Ant ant, AntImageConfig imageConfig) {
         super(imageConfig.getMovingImageName());

@@ -1,5 +1,7 @@
 package ants;
 
+import ants.interfaces.LarvaeSubscriber;
+
 /**
  * LarvaeInfoEmiter
  */
