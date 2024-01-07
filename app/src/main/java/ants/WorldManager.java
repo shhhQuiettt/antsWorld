@@ -129,6 +129,10 @@ public class WorldManager implements AntDeathSubscriber {
             this.attachVertexInfoListener(vertexGui);
         }
 
+            // this.attachVertexInfoListener(vertexGui);
+            // this.attachVertexInfoListener(vertexGui);
+
+
     }
 
     private synchronized void registerNewAnt(Ant ant) {
