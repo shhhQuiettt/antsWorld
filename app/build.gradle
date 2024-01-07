@@ -29,6 +29,13 @@ application {
     mainClass = 'ants.App'
 }
 
+sourceSets {
+        main {
+                resources {
+                        srcDirs= ["src/main/resources"]
+                }
+        }
+}
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()

@@ -1,0 +1,5 @@
+2. Making larva appear on ant
+3. Making larva appear on drop
+4. Sounds
+
+9. attack until
