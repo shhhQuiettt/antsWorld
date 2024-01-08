@@ -23,10 +23,21 @@ application {
     mainClass = 'ants.App'
 }
 
-sourceSets {
+sourceSets{
         main {
                 resources {
-                        srcDirs= ["src/main/resources"]
+                        // srcDirs= ["src/main/java/ants/"]
+                        srcDirs= ["src/main/resources/"]
                 }
         }
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "ants.App"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

@@ -3,11 +3,15 @@ package ants.gui;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -90,8 +94,9 @@ public abstract class Sprite extends JLabel {
     }
 
     public boolean imageContains(Point point) {
-        Rectangle allAread =  this.getBounds();
-        Rectangle imageArea = new Rectangle(allAread.x + this.getImageWidth() / 2, allAread.y + this.getImageHeight() / 2, this.getImageWidth(), this.getImageHeight());
+        Rectangle allAread = this.getBounds();
+        Rectangle imageArea = new Rectangle(allAread.x + this.getImageWidth() / 2,
+                allAread.y + this.getImageHeight() / 2, this.getImageWidth(), this.getImageHeight());
 
         return imageArea.contains(point);
     }
@@ -107,11 +112,12 @@ public abstract class Sprite extends JLabel {
 
     protected BufferedImage loadImage(String filename) {
         try {
-            return ImageIO.read(new File("images/" + filename + ".png"));
+            return ImageIO.read(getClass().getResource("/images/" + filename + ".png"));
         } catch (IOException e) {
             System.err.println("Error while loading image: " + filename + ".png");
             System.err.println("\t System message: " + e.getMessage());
             return null;
         }
     }
+
 }
