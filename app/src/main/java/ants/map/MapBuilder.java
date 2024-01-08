@@ -50,10 +50,14 @@ class MapBuilder {
         vertices.add(this.map.getBlueAnthill());
 
         for (Vertex v : vertices) {
-            ArrayList<Vertex> neighbors = getKnearestVertices(v, vertexNeighborhoodSize);
+            ArrayList<Vertex> neighbors = getKnearestVertices(v, 2 * vertexNeighborhoodSize);
             for (Vertex neighbor : neighbors) {
-                if (v.getNeighbors().size() < vertexNeighborhoodSize)
+                if (v.getNeighbors().size() < vertexNeighborhoodSize
+                        && !v.getNeighbors().contains(neighbor)) {
+
                     v.addNeighbor(neighbor);
+                    neighbor.addNeighbor(v);
+                }
             }
         }
 
